@@ -1,16 +1,14 @@
 import { createApp } from "vue"
-import { createRouter, createWebHistory } from "vue-router"
 import "@puture-ui/ui/theme/style.css"
 import "@puture-ui/ui/style.css"
 import "@puture-ui/business/style.css"
-import App from "./App.vue"
-import { routes } from "./router"
+import App from "./app.vue"
 import "./styles/global.css"
+import { setupRouter } from "./router"
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior: () => ({ top: 0 })
-})
+const app = createApp(App)
 
-createApp(App).use(router).mount("#app")
+// 挂载路由
+app.use(setupRouter)
+
+app.mount("#app")
