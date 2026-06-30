@@ -1,0 +1,120 @@
+.page-container {
+  --padding: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: var(--padding);
+  box-sizing: border-box;
+  position: relative;
+  background: #f0f2f5;
+}
+.filter-wrap {
+  padding-bottom: 0;
+  border-radius: 4px;
+  background-color: #fff;
+  padding: 10px;
+  .n-form-item {
+    --n-feedback-height: 10px;
+  }
+  :deep(.n-form-item .n-form-item-label) {
+    font-size: 12px;
+    padding-bottom: 0;
+  }
+  // 筛选框，多选下拉的时候，tag不换行，宽度自适应
+  :deep(.n-base-selection-tags:has(> div:nth-child(3))) {
+    padding-right: 60px;
+    flex-wrap: nowrap;
+    & > div:first-of-type {
+      flex-shrink: 1;
+      flex-grow: 0;
+    }
+    & > div:nth-child(2) {
+      flex: 0 0 auto;
+    }
+    & > div:nth-child(3) {
+      flex: 0 0 auto;
+    }
+  }
+}
+.tool-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  .btn-wrap {
+    display: flex;
+    align-items: center;
+    & > * {
+      margin-right: 10px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+  .btn-right-wrap {
+    display: flex;
+    align-items: center;
+    .line {
+      width: 1px;
+      background-color: #bbb;
+      height: 14px;
+      margin: 0 10px;
+    }
+    .n-button {
+      font-size: 16px;
+      color: var(--text-color-secondary);
+      padding: 6px 8px;
+      border-radius: 3px;
+      &:hover {
+        background-color: #eceded;
+      }
+    }
+  }
+  .n-switch {
+    --n-rail-color-active: #6aa1ed;
+  }
+  .loading-icon {
+    animation: spin 1s linear infinite;
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.table-wrap {
+  width: 100%;
+  border-radius: 4px;
+  background-color: #fff;
+  flex: 1;
+  height: 0;
+  overflow: hidden;
+
+  :deep(.page-table) {
+    --n-line-height: 1.4;
+    height: 100%;
+
+    .table-btn-wrap {
+      .n-button {
+        margin-right: 8px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+.page-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 6px 10px;
+  flex-shrink: 0;
+}

@@ -46,18 +46,22 @@ const keyword = ref("")
 
 <style scoped lang="scss">
 .app-shell {
+  --example-aside-width: 146px;
+  --example-header-height: 48px;
+
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   color: var(--pc-text-color-1);
-  background: var(--pc-fill-action);
+  // background-color: #f0f2f5;
+  background: red;
 }
 
 .app-header {
   position: sticky;
   top: 0;
   z-index: 30;
-  height: 64px;
+  height: var(--example-header-height);
   background: var(--pc-fill-card);
   border-bottom: 1px solid var(--pc-border-color-divider);
 }
@@ -108,51 +112,10 @@ const keyword = ref("")
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 256px minmax(0, 1fr);
+  grid-template-columns: var(--example-aside-width) minmax(0, 1fr);
 }
 
 .app-main {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 24px 40px;
-}
-
-@media (max-width: 960px) {
-  .app-body {
-    grid-template-columns: 1fr;
-  }
-
-  .app-main {
-    padding: 16px;
-  }
-}
-
-@media (max-width: 720px) {
-  .app-header {
-    height: auto;
-  }
-
-  .app-header__inner {
-    min-height: 64px;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 12px 16px;
-  }
-
-  .app-header__left,
-  .app-header__actions {
-    width: 100%;
-  }
-
-  .app-header__left {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .app-header__search {
-    width: auto;
-    flex: 1;
-  }
 }
 </style>

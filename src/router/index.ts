@@ -23,7 +23,7 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "/list/base-table",
         name: "ListBaseTable",
-        component: () => import("@/views/home-page.vue"),
+        component: () => import("@/views/list/base-table/index.vue"),
         meta: {
           title: '基础表格页'
         }

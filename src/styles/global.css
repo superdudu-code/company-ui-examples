@@ -6,7 +6,6 @@ body {
   margin: 0;
   font-family: var(--pc-font-family);
   color: var(--pc-text-color-1);
-  background: var(--pc-fill-action);
 }
 
 * {

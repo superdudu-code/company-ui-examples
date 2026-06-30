@@ -41,7 +41,7 @@ const menuItems = computed(() =>
 }
 
 .top-nav__item {
-  height: 64px;
+  height: var(--example-header-height, 64px);
   display: flex;
   align-items: center;
   padding: 0 14px;
