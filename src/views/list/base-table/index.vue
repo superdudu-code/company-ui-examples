@@ -1,58 +1,89 @@
 <template>
   <div class="page-container">
     <section class="filter-wrap">
-      <NForm :model="searchForm" label-placement="left" size="small">
+      <NForm :model="searchParams" label-placement="left">
         <div class="base-table-page__filter-grid">
           <NFormItem label="商品名称">
-            <NInput v-model:value="searchForm.name" clearable placeholder="请输入商品名称" @keyup.enter="handleSearch" />
+            <NInput v-model:value="searchParams.name" clearable placeholder="请输入商品名称" @keyup.enter="handleSearch" />
           </NFormItem>
           <NFormItem label="商品分类">
-            <NSelect v-model:value="searchForm.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
+            <NSelect v-model:value="searchParams.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
           </NFormItem>
           <NFormItem label="商品状态">
-            <NSelect v-model:value="searchForm.status" clearable :options="statusOptions" placeholder="请选择商品状态" />
+            <NSelect v-model:value="searchParams.status" clearable :options="statusOptions" placeholder="请选择商品状态" />
           </NFormItem>
           <NFormItem label="库存状态">
-            <NSelect v-model:value="searchForm.stock" :options="stockOptions" placeholder="请选择库存状态" />
+            <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
+          </NFormItem>
+          <NFormItem label="库存状态">
+            <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
+          </NFormItem>
+          <NFormItem label="">
+            <NButton size="small" type="primary" @click="handleSearch">查询</NButton>
+            <NButton style="margin-left: 10px" size="small" @click="handleReset">重置</NButton>
           </NFormItem>
         </div>
       </NForm>
     </section>
 
     <section class="tool-wrap">
-      <NSpace>
-        <NButton size="small" type="primary" @click="handleSearch">查询</NButton>
-        <NButton size="small" @click="handleReset">重置</NButton>
-      </NSpace>
-      <NSpace>
-        <NButton size="small" type="primary">新增商品</NButton>
-        <NButton size="small" :disabled="checkedRowKeys.length === 0">批量下架</NButton>
-      </NSpace>
+      <div class="btn-wrap">
+        <NButton type="primary" @click="handleSearch">主要按钮</NButton>
+      </div>
+      <div class="btn-right-wrap">
+        <div class="tip">Tips：文字提示~</div>
+        <div class="line"></div>
+        <NButton text @click="queryData" data-report-name="刷新">
+          <NIcon :component="ReloadOutline" :class="{ 'loading-icon': loading }"></NIcon>
+        </NButton>
+        <NButton
+          text
+          tag="a"
+          href="https://docs.puture-in.com/docs/dawnwinerp_manual/WorkOrderManagement"
+          target="_blank"
+          data-report-name="帮助文档"
+        >
+          <NIcon :component="HelpCircleOutline"></NIcon>
+        </NButton>
+      </div>
     </section>
 
     <section class="table-wrap">
       <NDataTable
+        :checked-row-keys="selectIds"
         class="page-table"
-        v-model:checked-row-keys="checkedRowKeys"
         :columns="columns"
-        :data="pageData"
+        :data="tableData"
+        :loading="loading"
         :pagination="false"
         table-layout="fixed"
         flex-height
         size="small"
         :row-key="row => row.id"
+        :row-props="rowProps"
         :scroll-x="920"
+        @update:checked-row-keys="handleCheckedRowChange"
       />
     </section>
 
     <section class="page-wrap">
-      <div class="base-table-page__selected">已选择 {{ checkedRowKeys.length }} 条数据</div>
+      <div class="base-table-page__selected">
+        <NDropdown v-if="selectRows.length > 0" trigger="hover" :options="selectOption" @select="handleSelectCall">
+          <NButton size="small" quaternary type="primary" icon-placement="right">
+            已选中 {{ selectRows.length }} 条数据
+            <template #icon>
+              <NIcon :component="ChevronDown" size="14"></NIcon>
+            </template>
+          </NButton>
+        </NDropdown>
+      </div>
       <NPagination
-        v-model:page="page"
-        :item-count="filteredData.length"
-        :page-size="pageSize"
+        :page="pageParams.current"
+        :item-count="total"
+        :page-size="pageParams.size"
         :page-sizes="[10, 20, 30, 50]"
         show-size-picker
+        @update:page="handlePageChange"
         @update:page-size="handlePageSizeChange"
       />
     </section>
@@ -60,10 +91,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, reactive, ref } from 'vue'
-import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
-import { NButton, NDataTable, NForm, NFormItem, NInput, NPagination, NSelect, NSpace, NTag } from 'naive-ui'
-import { productList, productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from './mock'
+import { h, onBeforeUnmount } from 'vue'
+import { usePageSearch, useTableSelect } from '@puture-ui/capabilities'
+import type { DataTableColumns } from 'naive-ui'
+import { NButton, NDataTable, NDropdown, NForm, NFormItem, NInput, NPagination, NSelect, NTag, NIcon } from 'naive-ui'
+import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from './mock'
+import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
+import { queryProductList } from './api'
 
 type SearchForm = {
   name: string
@@ -72,16 +106,17 @@ type SearchForm = {
   stock: 'all' | 'in-stock' | 'empty'
 }
 
-const searchForm = reactive<SearchForm>({
+type ProductPageParams = {
+  current: number
+  size: number
+}
+
+const defaultSearchParams: SearchForm = {
   name: '',
   category: null,
   status: null,
   stock: 'all'
-})
-
-const page = ref(1)
-const pageSize = ref(10)
-const checkedRowKeys = ref<DataTableRowKey[]>([])
+}
 
 const categoryOptions = [
   { label: '家用电器', value: '家用电器' },
@@ -133,94 +168,77 @@ const columns: DataTableColumns<ProductItem> = [
   { title: '更新时间', key: 'updatedAt', width: 130 }
 ]
 
-const filteredData = computed(() => {
-  const keyword = searchForm.name.trim().toLowerCase()
-
-  return productList.filter(item => {
-    const matchName = !keyword || item.name.toLowerCase().includes(keyword)
-    const matchCategory = !searchForm.category || item.category === searchForm.category
-    const matchStatus = !searchForm.status || item.status === searchForm.status
-    const matchStock =
-      searchForm.stock === 'all' ||
-      (searchForm.stock === 'in-stock' && item.stock > 0) ||
-      (searchForm.stock === 'empty' && item.stock === 0)
-
-    return matchName && matchCategory && matchStatus && matchStock
-  })
+const { selectRows, selectIds, selectOption, handleSelectCall, handleCheckedRowChange, rowProps, handleUnSelect } = useTableSelect<
+  ProductItem,
+  number
+>({
+  primaryRowKeyFn: row => row.id
 })
 
-const pageData = computed(() => {
-  const start = (page.value - 1) * pageSize.value
-
-  return filteredData.value.slice(start, start + pageSize.value)
+const {
+  loading,
+  tableData,
+  total,
+  searchParams,
+  pageParams,
+  queryData,
+  handleSearch: search,
+  handleResetForm,
+  handlePageChange: changePage,
+  handlePageSizeChange: changePageSize,
+  cancelRequest
+} = usePageSearch<ProductPageParams, SearchForm, ProductItem>(queryProductList, {
+  defaultPageParams: {
+    current: 1,
+    size: 50
+  },
+  defaultSearchParams
 })
 
-/** 重置分页到第一页。 */
-function resetPage() {
-  page.value = 1
-}
-
-/** 清空筛选条件和已选数据。 */
-function handleReset() {
-  searchForm.name = ''
-  searchForm.category = null
-  searchForm.status = null
-  searchForm.stock = 'all'
-  checkedRowKeys.value = []
-  resetPage()
+/** 清空已选数据并执行查询。 */
+function queryWithSelectionClear() {
+  handleUnSelect()
+  return queryData()
 }
 
 /** 应用筛选条件。 */
 function handleSearch() {
-  resetPage()
+  handleUnSelect()
+  return search()
 }
 
-/** 更新每页条数并重置分页。 */
-function handlePageSizeChange(size: number) {
-  pageSize.value = size
-  resetPage()
+/** 清空筛选条件和已选数据。 */
+function handleReset() {
+  handleUnSelect()
+  handleResetForm()
+  return search()
 }
+
+/** 切换页码并清空已选数据。 */
+function handlePageChange(page: number) {
+  handleUnSelect()
+  return changePage(page)
+}
+
+/** 切换每页条数并清空已选数据。 */
+function handlePageSizeChange(size: number) {
+  handleUnSelect()
+  return changePageSize(size)
+}
+
+queryWithSelectionClear()
+onBeforeUnmount(() => {
+  cancelRequest()
+})
 </script>
 
 <style lang="scss" scoped>
 @use '@/styles/base-table-page' as tablePage;
 
-.base-table-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.base-table-page__filter,
-.base-table-page__toolbar,
-.base-table-page__table,
-.base-table-page__pagination {
-  background: var(--pc-fill-card);
-  border: 1px solid var(--pc-border-color-divider);
-  border-radius: var(--pc-radius-base);
-}
-
-.base-table-page__filter {
-  padding: 18px 20px 0;
-}
-
 .base-table-page__filter-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 16px;
-}
-
-.base-table-page__toolbar,
-.base-table-page__pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
-}
-
-.base-table-page__table {
-  padding: 0 20px;
 }
 
 .base-table-page__selected {
@@ -240,8 +258,8 @@ function handlePageSizeChange(size: number) {
     grid-template-columns: 1fr;
   }
 
-  .base-table-page__toolbar,
-  .base-table-page__pagination {
+  .tool-wrap,
+  .page-wrap {
     align-items: flex-start;
     flex-direction: column;
   }

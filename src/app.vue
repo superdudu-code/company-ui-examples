@@ -8,6 +8,7 @@ import { pcNaiveThemeOverrides } from "@puture-ui/ui/theme"
     :theme-overrides="pcNaiveThemeOverrides"
     :locale="zhCN"
     :date-locale="dateZhCN"
+    inline-theme-disabled
   >
     <RouterView />
   </NConfigProvider>
