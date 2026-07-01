@@ -66,6 +66,7 @@ const menuItems = computed<LayoutMenuItem[]>(() => {
   padding: 20px 14px;
   background: var(--pc-fill-card);
   border-right: 1px solid var(--pc-border-color-divider);
+  box-sizing: border-box;
 }
 
 .aside-nav__list {

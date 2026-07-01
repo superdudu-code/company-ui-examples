@@ -3,8 +3,9 @@ import "@puture-ui/ui/theme/style.css"
 import "@puture-ui/ui/style.css"
 import "@puture-ui/business/style.css"
 import App from "./app.vue"
-import "./styles/global.css"
 import { setupRouter } from "./router"
+
+import "./styles/index.scss"
 
 const app = createApp(App)
 

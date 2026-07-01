@@ -53,8 +53,7 @@ const keyword = ref("")
   display: flex;
   flex-direction: column;
   color: var(--pc-text-color-1);
-  // background-color: #f0f2f5;
-  background: red;
+  background-color: #f0f2f5;
 }
 
 .app-header {
@@ -64,6 +63,7 @@ const keyword = ref("")
   height: var(--example-header-height);
   background: var(--pc-fill-card);
   border-bottom: 1px solid var(--pc-border-color-divider);
+  box-sizing: border-box;
 }
 
 .app-header__inner {
@@ -73,6 +73,7 @@ const keyword = ref("")
   justify-content: space-between;
   gap: 24px;
   padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .app-header__left {

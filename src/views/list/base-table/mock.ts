@@ -48,7 +48,7 @@ export const productList: ProductItem[] = Array.from({ length: 70 }, (_, index) 
 
   return {
     id,
-    name: `${productNames[index % productNames.length]} ${String(id).padStart(2, "0")}`,
+    name: `Goods moring ${productNames[index % productNames.length]} ${String(id).padStart(2, "0")}`,
     category,
     price: 99 + (index % 12) * 36,
     stock: status === "sold-out" ? 0 : 12 + (index * 7) % 96,
