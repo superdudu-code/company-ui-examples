@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@puture-ui/business": "^0.0.6",
-    "@puture-ui/capabilities": "^0.0.8",
-    "@puture-ui/ui": "^0.0.9",
+    "@puture-ui/business": "^0.0.7",
+    "@puture-ui/capabilities": "^0.0.9",
+    "@puture-ui/ui": "^0.0.10",
     "@vicons/ionicons5": "^0.13.0",
     "axios": "^1.7.7",
     "dayjs": "^1.11.20",
