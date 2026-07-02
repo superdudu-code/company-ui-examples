@@ -17,6 +17,22 @@
   background-color: #fff;
   padding: 10px;
   box-shadow: var(--section-box-shadow);
+
+  .filter-wrap-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 16px;
+    .grid-item2 {
+      grid-column: span 2;
+    }
+    .grid-item3 {
+      grid-column: span 3;
+    }
+    .grid-item4 {
+      grid-column: span 4;
+    }
+  }
+
   .n-form-item {
     --n-feedback-height: 10px;
   }

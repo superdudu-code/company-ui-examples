@@ -1,34 +1,41 @@
 <template>
   <div class="page-container">
     <section class="filter-wrap">
-      <NForm :model="searchParams" label-placement="left">
-        <div class="base-table-page__filter-grid">
-          <NFormItem label="商品名称">
-            <NInput v-model:value="searchParams.name" clearable placeholder="请输入商品名称" @keyup.enter="handleSearch" />
-          </NFormItem>
-          <NFormItem label="商品分类">
-            <NSelect v-model:value="searchParams.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
-          </NFormItem>
-          <NFormItem label="商品状态">
-            <NSelect v-model:value="searchParams.status" clearable :options="statusOptions" placeholder="请选择商品状态" />
-          </NFormItem>
-          <NFormItem label="库存状态">
-            <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
-          </NFormItem>
-          <NFormItem label="库存状态">
-            <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
-          </NFormItem>
-          <NFormItem label="">
-            <NButton size="small" type="primary" @click="handleSearch">查询</NButton>
-            <NButton style="margin-left: 10px" size="small" @click="handleReset">重置</NButton>
-          </NFormItem>
-        </div>
+      <NForm :model="searchParams" label-placement="left" class="filter-wrap-grid">
+        <NFormItem label="商品分类" class="grid-item4">
+          <NRadioGroup v-model:value="searchParams.category" clearable placeholder="请输入商品名称">
+            <NRadioButton v-for="option in categoryOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
+            </NRadioButton>
+          </NRadioGroup>
+        </NFormItem>
+        <NFormItem label="商品名称">
+          <NInput v-model:value="searchParams.name" clearable placeholder="请输入商品名称" @keyup.enter="handleSearch" />
+        </NFormItem>
+        <NFormItem label="商品分类">
+          <NSelect v-model:value="searchParams.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
+        </NFormItem>
+        <NFormItem label="商品状态">
+          <NSelect v-model:value="searchParams.status" clearable :options="statusOptions" placeholder="请选择商品状态" />
+        </NFormItem>
+        <NFormItem label="库存状态">
+          <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
+        </NFormItem>
+        <NFormItem label="库存状态">
+          <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
+        </NFormItem>
+        <NFormItem label="">
+          <NButton type="primary" @click="handleSearch">查询</NButton>
+          <NButton style="margin-left: 10px" @click="handleReset">重置</NButton>
+        </NFormItem>
       </NForm>
     </section>
 
     <section class="tool-wrap">
       <div class="btn-wrap">
-        <NButton type="primary" @click="handleSearch">主要按钮</NButton>
+        <NButton type="primary" @click="handleSearch">新增商品</NButton>
+        <NButton type="primary" secondary :disabled="selectIds.length === 0" @click="handleSearch">批量xx操作</NButton>
+        <NButton @click="handleSearch">更次要的</NButton>
       </div>
       <div class="btn-right-wrap">
         <div class="tip">Tips：文字提示~</div>
@@ -61,7 +68,7 @@
         size="small"
         :row-key="row => row.id"
         :row-props="rowProps"
-        :scroll-x="920"
+        :scroll-x="1060"
         @update:checked-row-keys="handleCheckedRowChange"
       />
     </section>
@@ -90,11 +97,24 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { h, onBeforeUnmount } from 'vue'
+<script setup lang="tsx">
+import { onBeforeUnmount } from 'vue'
 import { usePageSearch, useTableSelect } from '@puture-ui/capabilities'
 import type { DataTableColumns } from 'naive-ui'
-import { NButton, NDataTable, NDropdown, NForm, NFormItem, NInput, NPagination, NSelect, NTag, NIcon } from 'naive-ui'
+import {
+  NButton,
+  NDataTable,
+  NDropdown,
+  NForm,
+  NFormItem,
+  NInput,
+  NPagination,
+  NSelect,
+  NTag,
+  NIcon,
+  NRadioGroup,
+  NRadioButton
+} from 'naive-ui'
 import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from './mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
 import { queryProductList } from './api'
@@ -162,10 +182,24 @@ const columns: DataTableColumns<ProductItem> = [
     key: 'status',
     width: 100,
     render(row) {
-      return h(NTag, { size: 'small', type: statusTagType[row.status] }, { default: () => productStatusText[row.status] })
+      return <NTag size="small" type={statusTagType[row.status]}>{productStatusText[row.status]}</NTag>
     }
   },
-  { title: '更新时间', key: 'updatedAt', width: 130 }
+  { title: '更新时间', key: 'updatedAt', width: 130 },
+  {
+    title: '操作',
+    key: 'actions',
+    width: 140,
+    fixed: 'right',
+    render(row) {
+      return (
+        <div class="table-btn-wrap">
+          <NButton text type="primary" onClick={() => handleEdit(row)}>编辑</NButton>
+          <NButton text type="error" onClick={() => handleDelete(row)}>删除</NButton>
+        </div>
+      )
+    }
+  }
 ]
 
 const { selectRows, selectIds, selectOption, handleSelectCall, handleCheckedRowChange, rowProps, handleUnSelect } = useTableSelect<
@@ -214,6 +248,16 @@ function handleReset() {
   return search()
 }
 
+/** 提示当前编辑的数据。 */
+function handleEdit(row: ProductItem) {
+  window.alert(`编辑：${row.name}`)
+}
+
+/** 提示当前删除的数据。 */
+function handleDelete(row: ProductItem) {
+  window.alert(`删除：${row.name}`)
+}
+
 /** 切换页码并清空已选数据。 */
 function handlePageChange(page: number) {
   handleUnSelect()
@@ -234,34 +278,4 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @use '@/styles/base-table-page' as tablePage;
-
-.base-table-page__filter-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: 16px;
-}
-
-.base-table-page__selected {
-  color: var(--pc-text-color-2);
-  font-size: var(--pc-font-size-base);
-  white-space: nowrap;
-}
-
-@media (max-width: 960px) {
-  .base-table-page__filter-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .base-table-page__filter-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tool-wrap,
-  .page-wrap {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
 </style>
