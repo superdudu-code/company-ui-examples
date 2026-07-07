@@ -6,6 +6,7 @@ export type ProductItem = {
   id: number
   name: string
   category: ProductCategory
+  country: string
   price: number
   stock: number
   status: ProductStatus
@@ -28,6 +29,8 @@ const productNames = [
 
 const categories: ProductCategory[] = ["家用电器", "数码配件", "办公用品", "生活百货"]
 
+  const countries: string[] = ["CN", "US", "JP", "DE"]
+
 const statuses: ProductStatus[] = ["selling", "sold-out", "draft"]
 
 export const productStatusText: Record<ProductStatus, string> = {
@@ -44,12 +47,14 @@ function formatDate(day: number) {
 export const productList: ProductItem[] = Array.from({ length: 70 }, (_, index) => {
   const id = index + 1
   const category = categories[index % categories.length]
+  const country = countries[index % countries.length]
   const status = statuses[index % statuses.length]
 
   return {
     id,
     name: `Goods moring ${productNames[index % productNames.length]} ${String(id).padStart(2, "0")}`,
     category,
+    country,
     price: 99 + (index % 12) * 36,
     stock: status === "sold-out" ? 0 : 12 + (index * 7) % 96,
     status,

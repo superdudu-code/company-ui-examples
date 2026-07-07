@@ -4,6 +4,7 @@ import { ProductCategory, ProductItem, productList, ProductStatus } from "./mock
 type SearchForm = {
   name: string
   category: ProductCategory | null
+  country: string | null
   status: ProductStatus | null
   stock: 'all' | 'in-stock' | 'empty'
 }
@@ -20,13 +21,14 @@ export function queryProductList(
       const filteredData = productList.filter(item => {
         const matchName = !keyword || item.name.toLowerCase().includes(keyword)
         const matchCategory = !params.param.category || item.category === params.param.category
+        const matchCountry = !params.param.country || item.country === params.param.country
         const matchStatus = !params.param.status || item.status === params.param.status
         const matchStock =
           params.param.stock === 'all' ||
           (params.param.stock === 'in-stock' && item.stock > 0) ||
           (params.param.stock === 'empty' && item.stock === 0)
 
-        return matchName && matchCategory && matchStatus && matchStock
+        return matchName && matchCategory && matchCountry && matchStatus && matchStock
       })
       const start = (params.page.current - 1) * params.page.size
 

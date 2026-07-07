@@ -15,6 +15,9 @@
         <NFormItem label="商品分类">
           <NSelect v-model:value="searchParams.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
         </NFormItem>
+        <NFormItem label="国家">
+          <PcCountrySelect v-model:value="searchParams.country" placeholder="请选择国家" />
+        </NFormItem>
         <NFormItem label="商品状态">
           <NSelect v-model:value="searchParams.status" clearable :options="statusOptions" placeholder="请选择商品状态" />
         </NFormItem>
@@ -100,6 +103,7 @@
 <script setup lang="tsx">
 import { onBeforeUnmount } from 'vue'
 import { usePageSearch, useTableSelect } from '@puture-ui/capabilities'
+import { PcCountrySelect } from '@puture-ui/business'
 import type { DataTableColumns } from 'naive-ui'
 import {
   NButton,
@@ -122,6 +126,7 @@ import { queryProductList } from './api'
 type SearchForm = {
   name: string
   category: ProductCategory | null
+  country: string | null
   status: ProductStatus | null
   stock: 'all' | 'in-stock' | 'empty'
 }
@@ -134,6 +139,7 @@ type ProductPageParams = {
 const defaultSearchParams: SearchForm = {
   name: '',
   category: null,
+  country: null,
   status: null,
   stock: 'all'
 }
@@ -166,6 +172,7 @@ const statusTagType: Record<ProductStatus, 'success' | 'error' | 'default'> = {
 const columns: DataTableColumns<ProductItem> = [
   { type: 'selection' },
   { title: '商品名称', key: 'name', minWidth: 160 },
+  { title: '产地', key: 'country', width: 120 },
   { title: '分类', key: 'category', width: 120 },
   {
     title: '价格',

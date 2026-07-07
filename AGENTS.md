@@ -11,8 +11,23 @@
 7. 输出代码修改时，优先给出实际可执行、已接入项目的修改，避免示例代码、伪代码或额外无关文件。
 
 ## 组件/能力规范
-本项目生成或修改 Vue 前端代码时，AI 必须优先使用 `@puture-ui/*` 组件库
-组件库LLM链接：https://ui-test-01.external.sub.puture-in.com/guide/llms.html
+本项目使用 `@puture-ui/*` 组件库，禁止用 naive-ui 原生组件（NSelect / NDatePicker / NForm / NDataTable 等）
+去实现组件库已提供的场景。
+
+### AI 使用指引
+
+阅读 https://ui-test-01.external.sub.puture-in.com/llms-full.txt 并理解 puture-ui 组件库，
+在编写 Vue 前端代码时使用这些知识。
+
+单个组件文档：
+https://ui-test-01.external.sub.puture-in.com/components/<name>.md
+（如 base-select.md、country-select.md、date-range-picker.md、search-form.md）
+
+### 选组件流程
+
+1. 判断是否属于组件库已覆盖的场景（下拉、日期区间、搜索表单、国家选择等）
+2. 是 → 读上方 llms-full.txt 找到对应 Pc* 组件，用它
+3. 否 → 才允许直接用 naive-ui
 
 ## 代码规范
 
