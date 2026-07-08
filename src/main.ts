@@ -7,9 +7,15 @@ import { setupRouter } from "./router"
 
 import "./styles/index.scss"
 
+import { createBusiness } from "@puture-ui/business"
+import { request } from "./utils/request/request.js"
+
+
 const app = createApp(App)
 
 // 挂载路由
 app.use(setupRouter)
+
+app.use(createBusiness({ request: request }))
 
 app.mount("#app")
