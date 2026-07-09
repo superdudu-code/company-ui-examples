@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-07-09T06:47:37.373Z",
+  "templates": [
+    {
+      "name": "list-base-table",
+      "title": "基础列表页",
+      "description": "带筛选表单、工具栏（新增/批量操作）、分页表格的后台管理列表页",
+      "whenToUse": "后台管理列表、条件查询、分页展示、批量操作等场景",
+      "entryUrl": "/templates/list-base-table.vue",
+      "designGuideUrl": "https://ui-test-01.external.sub.puture-in.com/design/base-table.md",
+      "route": "/list/base-table",
+      "tags": [
+        "基础列表",
+        "查询",
+        "分页",
+        "批量操作"
+      ],
+      "version": "937920d911ce"
+    }
+  ]
+}
