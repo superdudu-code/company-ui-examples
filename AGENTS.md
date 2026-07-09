@@ -23,6 +23,30 @@
 https://ui-test-01.external.sub.puture-in.com/components/<name>.md
 （如 base-select.md、country-select.md、date-range-picker.md、search-form.md）
 
+### 页面模板检索
+
+需要开发完整页面（列表页 / 详情页 / 表单页等）时，优先按以下顺序：
+
+1. 查阅模板清单：
+   https://ui-test-01.external.sub.puture-in.com/example/templates.json
+
+2. 根据 `whenToUse` / `tags` / `description` 匹配到合适模板。
+
+3. 命中模板后，若该条目带 `designGuideUrl`，先 fetch 这份设计指南，
+   理解该页面类型的布局约束（分区、栅格、按钮权重、高度处理等）。
+
+4. 再取模板源码：
+   https://ui-test-01.external.sub.puture-in.com/example/templates/<name>.vue
+   （`<name>` 即 `templates.json` 中该条目的 `name` 字段）
+
+5. 在模板源码基础上按需求改字段、改列、改交互，不要从零拼装。
+   模板中出现的具体控件（NSelect / NRadioGroup 等）仅是示例填充，
+   实际筛选项按 llms-full.txt 的组件优先级规则重新选型，不要照抄。
+
+6. 无匹配模板时，退回到组件粒度：
+   参考 llms-full.txt 与 components/<name>.md 自行组合 Pc* 组件；
+   通用设计规范（颜色 / 尺寸 / 字体等）已包含在 llms-full.txt 里。
+
 ### 选组件流程
 
 1. 判断是否属于组件库已覆盖的场景（下拉、日期区间、搜索表单、国家选择等）
