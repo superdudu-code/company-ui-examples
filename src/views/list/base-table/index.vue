@@ -119,9 +119,9 @@ import {
   NRadioGroup,
   NRadioButton
 } from 'naive-ui'
-import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from './mock'
+import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from '@/api/list/mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
-import { queryProductList } from './api'
+import { queryProductList } from '@/api/list/api'
 
 type SearchForm = {
   name: string
