@@ -21,6 +21,7 @@ interface TemplateOutput {
   description: string
   whenToUse?: string
   entryUrl: string
+  sourceUrl: string
   designGuideUrl?: string
   route?: string
   tags?: string[]
@@ -35,6 +36,7 @@ const viewsDir = resolve(examplesRoot, "src/views")
 const publicDir = resolve(examplesRoot, "public")
 const templatesDir = resolve(publicDir, "templates")
 const templatesJsonPath = resolve(publicDir, "templates.json")
+const publicBaseUrl = "https://ui-test-01.external.sub.puture-in.com"
 
 /**
  * 递归收集 views 目录下的模板元数据文件。
@@ -112,6 +114,7 @@ async function buildTemplate(meta: TemplateMeta, metaFilePath: string): Promise<
   })
   const version = createHash("sha256").update(source, "utf-8").digest("hex").slice(0, 12)
   const entryUrl = meta.entryUrl ?? `/templates/${meta.name}.vue`
+  const sourceUrl = `${publicBaseUrl}/example/templates/${meta.name}.vue`
   const outputPath = resolve(templatesDir, `${meta.name}.vue`)
 
   await writeFile(outputPath, source.replace(/^\uFEFF/, ""), "utf-8")
@@ -122,6 +125,7 @@ async function buildTemplate(meta: TemplateMeta, metaFilePath: string): Promise<
     description: meta.description,
     whenToUse: meta.whenToUse,
     entryUrl,
+    sourceUrl,
     designGuideUrl: meta.designGuideUrl,
     route: meta.route,
     tags: meta.tags,

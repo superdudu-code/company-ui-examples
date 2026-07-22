@@ -35,7 +35,8 @@ https://ui-test-01.external.sub.puture-in.com/components/<name>.md
 3. 命中模板后，若该条目带 `designGuideUrl`，先 fetch 这份设计指南，
    理解该页面类型的布局约束（分区、栅格、按钮权重、高度处理等）。
 
-4. 再取模板源码：
+4. 再读取条目中的 `sourceUrl` 获取 Vue 模板源码。
+   旧清单若缺少 `sourceUrl`，使用：
    https://ui-test-01.external.sub.puture-in.com/example/templates/<name>.vue
    （`<name>` 即 `templates.json` 中该条目的 `name` 字段）
 
