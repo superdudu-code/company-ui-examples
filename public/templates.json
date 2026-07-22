@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T07:41:27.446Z",
+  "generatedAt": "2026-07-22T04:20:00.491Z",
   "templates": [
     {
       "name": "list-base-table",
@@ -15,7 +15,7 @@
         "分页",
         "批量操作"
       ],
-      "version": "937920d911ce"
+      "version": "a14ecb9dd4e8"
     }
   ]
 }

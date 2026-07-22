@@ -118,6 +118,36 @@
         }
       }
     }
+
+    .base-table-page__product-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .base-table-page__product-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .base-table-page__product-name {
+      overflow: hidden;
+      color: var(--pc-text-color-1);
+      font-weight: var(--pc-font-weight-strong);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .base-table-page__product-sku {
+      overflow: hidden;
+      color: var(--pc-text-color-3);
+      font-size: var(--pc-font-size-mini);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 }
 

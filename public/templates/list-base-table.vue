@@ -71,7 +71,7 @@
         size="small"
         :row-key="row => row.id"
         :row-props="rowProps"
-        :scroll-x="1060"
+        :scroll-x="1160"
         @update:checked-row-keys="handleCheckedRowChange"
       />
     </section>
@@ -104,6 +104,7 @@
 import { onBeforeUnmount } from 'vue'
 import { usePageSearch, useTableSelect } from '@puture-ui/capabilities'
 import { PcCountrySelect } from '@puture-ui/business'
+import { PcTableImagePreview } from '@puture-ui/ui'
 import type { DataTableColumns } from 'naive-ui'
 import {
   NButton,
@@ -119,9 +120,9 @@ import {
   NRadioGroup,
   NRadioButton
 } from 'naive-ui'
-import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from './mock'
+import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from '@/api/list/mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
-import { queryProductList } from './api'
+import { queryProductList } from '@/api/list/api'
 
 type SearchForm = {
   name: string
@@ -171,7 +172,22 @@ const statusTagType: Record<ProductStatus, 'success' | 'error' | 'default'> = {
 
 const columns: DataTableColumns<ProductItem> = [
   { type: 'selection' },
-  { title: '商品名称', key: 'name', minWidth: 160 },
+  {
+    title: '商品信息',
+    key: 'productInfo',
+    minWidth: 260,
+    render(row) {
+      return (
+        <div class="base-table-page__product-info">
+          <PcTableImagePreview url={row.imageUrl} width={48} height={48} fit="cover" lazy />
+          <div class="base-table-page__product-content">
+            <div class="base-table-page__product-name">{row.name}</div>
+            <div class="base-table-page__product-sku">SKU：{row.sku}</div>
+          </div>
+        </div>
+      )
+    }
+  },
   { title: '产地', key: 'country', width: 120 },
   { title: '分类', key: 'category', width: 120 },
   {

@@ -5,6 +5,8 @@ export type ProductCategory = "家用电器" | "数码配件" | "办公用品" |
 export type ProductItem = {
   id: number
   name: string
+  sku: string
+  imageUrl: string
   category: ProductCategory
   country: string
   price: number
@@ -25,6 +27,19 @@ const productNames = [
   "便携充电宝",
   "人体工学椅",
   "迷你加湿器"
+]
+
+const productImageUrls = [
+  "https://picsum.photos/id/26/480/480",
+  "https://picsum.photos/id/42/480/480",
+  "https://picsum.photos/id/96/480/480",
+  "https://picsum.photos/id/119/480/480",
+  "https://picsum.photos/id/122/480/480",
+  "https://picsum.photos/id/250/480/480",
+  "https://picsum.photos/id/292/480/480",
+  "https://picsum.photos/id/367/480/480",
+  "https://picsum.photos/id/431/480/480",
+  "https://picsum.photos/id/534/480/480"
 ]
 
 const categories: ProductCategory[] = ["家用电器", "数码配件", "办公用品", "生活百货"]
@@ -53,6 +68,8 @@ export const productList: ProductItem[] = Array.from({ length: 70 }, (_, index) 
   return {
     id,
     name: `Goods moring ${productNames[index % productNames.length]} ${String(id).padStart(2, "0")}`,
+    sku: `SKU-${String(100000 + id)}`,
+    imageUrl: productImageUrls[index % productImageUrls.length],
     category,
     country,
     price: 99 + (index % 12) * 36,
