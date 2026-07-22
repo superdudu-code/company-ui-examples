@@ -42,6 +42,8 @@ const productImageUrls = [
   "https://picsum.photos/id/534/480/480"
 ]
 
+const productPrices = [99, 135, 207, 459, 699, 12999, 23888, 45999, 329, 518, 889, 16999]
+
 const categories: ProductCategory[] = ["家用电器", "数码配件", "办公用品", "生活百货"]
 
   const countries: string[] = ["CN", "US", "JP", "DE"]
@@ -72,7 +74,7 @@ export const productList: ProductItem[] = Array.from({ length: 70 }, (_, index) 
     imageUrl: productImageUrls[index % productImageUrls.length],
     category,
     country,
-    price: 99 + (index % 12) * 36,
+    price: productPrices[index % productPrices.length],
     stock: status === "sold-out" ? 0 : 12 + (index * 7) % 96,
     status,
     sales: 80 + (index * 13) % 520,

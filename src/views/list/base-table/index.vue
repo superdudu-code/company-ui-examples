@@ -102,7 +102,7 @@
 
 <script setup lang="tsx">
 import { onBeforeUnmount } from 'vue'
-import { usePageSearch, useTableSelect } from '@puture-ui/capabilities'
+import { moneyFormat, usePageSearch, useTableSelect } from '@puture-ui/capabilities'
 import { PcCountrySelect } from '@puture-ui/business'
 import { PcTableImagePreview } from '@puture-ui/ui'
 import type { DataTableColumns } from 'naive-ui'
@@ -170,6 +170,32 @@ const statusTagType: Record<ProductStatus, 'success' | 'error' | 'default'> = {
   draft: 'default'
 }
 
+/**
+ * 搜索逻辑
+ */
+const {
+  loading,
+  tableData,
+  total,
+  searchParams,
+  pageParams,
+  queryData,
+  handleSearch: search,
+  handleResetForm,
+  handlePageChange: changePage,
+  handlePageSizeChange: changePageSize,
+  cancelRequest
+} = usePageSearch<ProductPageParams, SearchForm, ProductItem>(queryProductList, {
+  defaultPageParams: {
+    current: 1,
+    size: 50
+  },
+  defaultSearchParams
+})
+
+/**
+ * 表格列配置
+ */
 const columns: DataTableColumns<ProductItem> = [
   { type: 'selection' },
   {
@@ -179,7 +205,7 @@ const columns: DataTableColumns<ProductItem> = [
     render(row) {
       return (
         <div class="base-table-page__product-info">
-          <PcTableImagePreview url={row.imageUrl} width={48} height={48} fit="cover" lazy />
+          <PcTableImagePreview url={row.imageUrl} width={38} height={38} fit="cover" lazy />
           <div class="base-table-page__product-content">
             <div class="base-table-page__product-name">{row.name}</div>
             <div class="base-table-page__product-sku">SKU：{row.sku}</div>
@@ -189,21 +215,23 @@ const columns: DataTableColumns<ProductItem> = [
     }
   },
   { title: '产地', key: 'country', width: 120 },
-  { title: '分类', key: 'category', width: 120 },
+  { title: '分类', key: 'category', width: 100 },
   {
     title: '价格',
     key: 'price',
-    width: 110,
+    width: 128,
+    align: 'right',
     render(row) {
-      return `¥${row.price.toFixed(2)}`
+      return moneyFormat(row.price, { preUnit: '¥' })
     }
   },
-  { title: '库存', key: 'stock', width: 100 },
-  { title: '销量', key: 'sales', width: 100 },
+  { title: '库存', key: 'stock', width: 88, align: 'right' },
+  { title: '销量', key: 'sales', width: 88, align: 'right' },
   {
     title: '状态',
     key: 'status',
-    width: 100,
+    width: 96,
+    align: 'center',
     render(row) {
       return <NTag size="small" type={statusTagType[row.status]}>{productStatusText[row.status]}</NTag>
     }
@@ -225,31 +253,14 @@ const columns: DataTableColumns<ProductItem> = [
   }
 ]
 
+/**
+ * 表格选择逻辑
+ */
 const { selectRows, selectIds, selectOption, handleSelectCall, handleCheckedRowChange, rowProps, handleUnSelect } = useTableSelect<
   ProductItem,
   number
 >({
   primaryRowKeyFn: row => row.id
-})
-
-const {
-  loading,
-  tableData,
-  total,
-  searchParams,
-  pageParams,
-  queryData,
-  handleSearch: search,
-  handleResetForm,
-  handlePageChange: changePage,
-  handlePageSizeChange: changePageSize,
-  cancelRequest
-} = usePageSearch<ProductPageParams, SearchForm, ProductItem>(queryProductList, {
-  defaultPageParams: {
-    current: 1,
-    size: 50
-  },
-  defaultSearchParams
 })
 
 /** 清空已选数据并执行查询。 */
