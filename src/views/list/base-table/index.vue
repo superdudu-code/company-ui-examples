@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <section class="filter-wrap">
-      <NForm :model="searchParams" label-placement="left" size="small" class="filter-wrap-grid">
+      <NForm :model="searchParams" label-placement="left" size="small" label-width="70px" class="filter-wrap-grid">
         <NFormItem label="商品分类" class="grid-item4">
           <NRadioGroup v-model:value="searchParams.category" clearable placeholder="请输入商品名称">
             <NRadioButton v-for="option in categoryOptions" :key="option.value" :value="option.value">
@@ -11,6 +11,14 @@
         </NFormItem>
         <NFormItem label="商品名称">
           <NInput v-model:value="searchParams.name" clearable placeholder="请输入商品名称" @keyup.enter="handleSearch" />
+        </NFormItem>
+        <NFormItem label="品牌">
+          <PcBrandSelect
+            v-model:value="searchParams.brand"
+            clearable
+            value-field="goodsBrandName"
+            placeholder="请选择品牌"
+          />
         </NFormItem>
         <NFormItem label="商品分类">
           <NSelect v-model:value="searchParams.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
@@ -36,17 +44,18 @@
 
     <section class="tool-wrap">
       <div class="btn-wrap">
-        <NButton type="primary" @click="handleSearch">新增商品</NButton>
-        <NButton type="primary" secondary :disabled="selectIds.length === 0" @click="handleSearch">批量xx操作</NButton>
-        <NButton @click="handleSearch">更次要的</NButton>
+        <NButton type="primary" size="small" @click="handleSearch">新增商品</NButton>
+        <NButton type="primary" size="small" secondary :disabled="selectIds.length === 0" @click="handleSearch">批量xx操作</NButton>
+        <NButton size="small" @click="handleSearch">更次要的</NButton>
       </div>
       <div class="btn-right-wrap">
         <div class="tip">Tips：文字提示~</div>
         <div class="line"></div>
-        <NButton text @click="queryData" data-report-name="刷新">
+        <NButton size="small" text @click="queryData" data-report-name="刷新">
           <NIcon :component="ReloadOutline" :class="{ 'loading-icon': loading }"></NIcon>
         </NButton>
         <NButton
+          size="small"
           text
           tag="a"
           href="https://docs.puture-in.com/docs/dawnwinerp_manual/WorkOrderManagement"
@@ -71,7 +80,7 @@
         size="small"
         :row-key="row => row.id"
         :row-props="rowProps"
-        :scroll-x="1160"
+        :scroll-x="2000"
         @update:checked-row-keys="handleCheckedRowChange"
       />
     </section>
@@ -103,7 +112,7 @@
 <script setup lang="tsx">
 import { onBeforeUnmount } from 'vue'
 import { moneyFormat, usePageSearch, useTableSelect } from '@puture-ui/capabilities'
-import { PcCountrySelect } from '@puture-ui/business'
+import { PcBrandSelect, PcCountrySelect } from '@puture-ui/business'
 import { PcTableImagePreview } from '@puture-ui/ui'
 import type { DataTableColumns } from 'naive-ui'
 import {
@@ -120,12 +129,20 @@ import {
   NRadioGroup,
   NRadioButton
 } from 'naive-ui'
-import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from '@/api/list/mock'
+import {
+  productStatusText,
+  type ProductCategory,
+  type ProductItem,
+  type ProductStatus,
+  type ProductTag,
+  type ProductType
+} from '@/api/list/mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
 import { queryProductList } from '@/api/list/api'
 
 type SearchForm = {
   name: string
+  brand: string | null
   category: ProductCategory | null
   country: string | null
   status: ProductStatus | null
@@ -139,6 +156,7 @@ type ProductPageParams = {
 
 const defaultSearchParams: SearchForm = {
   name: '',
+  brand: null,
   category: null,
   country: null,
   status: null,
@@ -168,6 +186,18 @@ const statusTagType: Record<ProductStatus, 'success' | 'error' | 'default'> = {
   selling: 'success',
   'sold-out': 'error',
   draft: 'default'
+}
+
+const productTypeTagType: Record<ProductType, 'default' | 'info'> = {
+  普通产品: 'default',
+  组合产品: 'info'
+}
+
+const productTagType: Record<ProductTag, 'success' | 'error' | 'warning' | 'default'> = {
+  新品: 'success',
+  危险品: 'error',
+  大件: 'warning',
+  xxx: 'default'
 }
 
 /**
@@ -214,8 +244,35 @@ const columns: DataTableColumns<ProductItem> = [
       )
     }
   },
+  { title: '品牌', key: 'brand', width: 110 },
+  { title: '型号', key: 'model', width: 132 },
   { title: '产地', key: 'country', width: 120 },
   { title: '分类', key: 'category', width: 100 },
+  {
+    title: '产品类型',
+    key: 'productType',
+    width: 110,
+    align: 'center',
+    render(row) {
+      return <NTag size="small" type={productTypeTagType[row.productType]} bordered={false}>{row.productType}</NTag>
+    }
+  },
+  {
+    title: '标签',
+    key: 'tags',
+    width: 220,
+    render(row) {
+      return (
+        <div class="base-table-page__tag-list">
+          {row.tags.map(tag => (
+            <NTag key={tag} size="small" type={productTagType[tag]} bordered={false}>{tag}</NTag>
+          ))}
+        </div>
+      )
+    }
+  },
+  { title: '采购员', key: 'purchaser', width: 96 },
+  { title: '开发员', key: 'developer', width: 96 },
   {
     title: '价格',
     key: 'price',
@@ -350,6 +407,13 @@ onBeforeUnmount(() => {
     font-size: var(--pc-font-size-small);
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .base-table-page__tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
   }
 }
 </style>

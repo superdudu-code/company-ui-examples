@@ -2,13 +2,34 @@ export type ProductStatus = "selling" | "sold-out" | "draft"
 
 export type ProductCategory = "家用电器" | "数码配件" | "办公用品" | "生活百货"
 
+const productModels = [
+  "PT-LAMP-01",
+  "PT-AUDIO-02",
+  "PT-KEY-03",
+  "PT-CUP-04",
+  "PT-AIR-05",
+  "PT-BOX-06",
+  "PT-SPK-07",
+  "PT-PWR-08"
+] as const
+
+export type ProductType = "普通产品" | "组合产品"
+
+export type ProductTag = "新品" | "危险品" | "大件" | "xxx"
+
 export type ProductItem = {
   id: number
   name: string
   sku: string
   imageUrl: string
+  brand: string
+  model: string
   category: ProductCategory
   country: string
+  purchaser: string
+  developer: string
+  productType: ProductType
+  tags: ProductTag[]
   price: number
   stock: number
   status: ProductStatus
@@ -29,6 +50,8 @@ const productNames = [
   "迷你加湿器"
 ]
 
+const productBrands = ["Puture", "Moring", "Aster", "NOVA", "Kairo"]
+
 const productImageUrls = [
   "https://picsum.photos/id/26/480/480",
   "https://picsum.photos/id/42/480/480",
@@ -47,6 +70,22 @@ const productPrices = [99, 135, 207, 459, 699, 12999, 23888, 45999, 329, 518, 88
 const categories: ProductCategory[] = ["家用电器", "数码配件", "办公用品", "生活百货"]
 
   const countries: string[] = ["CN", "US", "JP", "DE"]
+
+const purchasers = ["林悦", "周扬", "许宁", "陈序"]
+
+const developers = ["王拓", "赵珂", "李昂", "沈岚"]
+
+const productTypes: ProductType[] = ["普通产品", "组合产品"]
+
+const productTagGroups: ProductTag[][] = [
+  ["新品"],
+  ["危险品"],
+  ["大件"],
+  ["新品", "大件"],
+  ["危险品", "xxx"],
+  ["新品", "危险品", "大件"],
+  ["xxx"]
+]
 
 const statuses: ProductStatus[] = ["selling", "sold-out", "draft"]
 
@@ -72,8 +111,14 @@ export const productList: ProductItem[] = Array.from({ length: 70 }, (_, index) 
     name: `Goods moring ${productNames[index % productNames.length]} ${String(id).padStart(2, "0")}`,
     sku: `SKU-${String(100000 + id)}`,
     imageUrl: productImageUrls[index % productImageUrls.length],
+    brand: productBrands[index % productBrands.length],
+    model: productModels[index % productModels.length],
     category,
     country,
+    purchaser: purchasers[index % purchasers.length],
+    developer: developers[index % developers.length],
+    productType: productTypes[index % productTypes.length],
+    tags: productTagGroups[index % productTagGroups.length],
     price: productPrices[index % productPrices.length],
     stock: status === "sold-out" ? 0 : 12 + (index * 7) % 96,
     status,

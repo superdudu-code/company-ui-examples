@@ -1,8 +1,10 @@
-import { PageSearchPageParams, PageSearchQueryParams, PageSearchResponse } from "@puture-ui/capabilities"
-import { ProductCategory, ProductItem, productList, ProductStatus } from "./mock"
+import type { PageSearchPageParams, PageSearchQueryParams, PageSearchResponse } from "@puture-ui/capabilities"
+import { productList } from "./mock"
+import type { ProductCategory, ProductItem, ProductStatus } from "./mock"
 
 type SearchForm = {
   name: string
+  brand: string | null
   category: ProductCategory | null
   country: string | null
   status: ProductStatus | null
@@ -20,6 +22,7 @@ export function queryProductList(
       const keyword = params.param.name.trim().toLowerCase()
       const filteredData = productList.filter(item => {
         const matchName = !keyword || item.name.toLowerCase().includes(keyword)
+        const matchBrand = !params.param.brand || item.brand === params.param.brand
         const matchCategory = !params.param.category || item.category === params.param.category
         const matchCountry = !params.param.country || item.country === params.param.country
         const matchStatus = !params.param.status || item.status === params.param.status
@@ -28,7 +31,7 @@ export function queryProductList(
           (params.param.stock === 'in-stock' && item.stock > 0) ||
           (params.param.stock === 'empty' && item.stock === 0)
 
-        return matchName && matchCategory && matchCountry && matchStatus && matchStock
+        return matchName && matchBrand && matchCategory && matchCountry && matchStatus && matchStock
       })
       const start = (params.page.current - 1) * params.page.size
 
