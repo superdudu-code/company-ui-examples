@@ -113,7 +113,7 @@
 import { onBeforeUnmount } from 'vue'
 import { moneyFormat, usePageSearch, useTableSelect } from '@puture-ui/capabilities'
 import { PcBrandSelect, PcCountrySelect } from '@puture-ui/business'
-import { PcTableImagePreview } from '@puture-ui/ui'
+import { PcTableImagePreview, PcTableOrdering } from '@puture-ui/ui'
 import type { DataTableColumns } from 'naive-ui'
 import {
   NButton,
@@ -138,7 +138,7 @@ import {
   type ProductType
 } from '@/api/list/mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
-import { queryProductList } from '@/api/list/api'
+import { queryProductList, type ProductPageParams } from '@/api/list/api'
 
 type SearchForm = {
   name: string
@@ -147,11 +147,6 @@ type SearchForm = {
   country: string | null
   status: ProductStatus | null
   stock: 'all' | 'in-stock' | 'empty'
-}
-
-type ProductPageParams = {
-  current: number
-  size: number
 }
 
 const defaultSearchParams: SearchForm = {
@@ -218,7 +213,8 @@ const {
 } = usePageSearch<ProductPageParams, SearchForm, ProductItem>(queryProductList, {
   defaultPageParams: {
     current: 1,
-    size: 50
+    size: 50,
+    orders: [{ column: 'updatedAt', asc: false }]
   },
   defaultSearchParams
 })
@@ -271,10 +267,12 @@ const columns: DataTableColumns<ProductItem> = [
       )
     }
   },
-  { title: '采购员', key: 'purchaser', width: 96 },
-  { title: '开发员', key: 'developer', width: 96 },
   {
-    title: '价格',
+    title: () => (
+      <PcTableOrdering v-model:value={pageParams.value.orders} keyName="price" single onChange={handleSearch}>
+        价格
+      </PcTableOrdering>
+    ),
     key: 'price',
     width: 128,
     align: 'right',
@@ -282,6 +280,8 @@ const columns: DataTableColumns<ProductItem> = [
       return moneyFormat(row.price, { preUnit: '¥' })
     }
   },
+  { title: '采购员', key: 'purchaser', width: 96 },
+  { title: '开发员', key: 'developer', width: 96 },
   { title: '库存', key: 'stock', width: 88, align: 'right' },
   { title: '销量', key: 'sales', width: 88, align: 'right' },
   {
@@ -297,7 +297,15 @@ const columns: DataTableColumns<ProductItem> = [
       )
     }
   },
-  { title: '更新时间', key: 'updatedAt', width: 130 },
+  {
+    title: () => (
+      <PcTableOrdering v-model:value={pageParams.value.orders} keyName="updatedAt" single onChange={handleSearch}>
+        更新时间
+      </PcTableOrdering>
+    ),
+    key: 'updatedAt',
+    width: 130
+  },
   {
     title: '操作',
     key: 'actions',

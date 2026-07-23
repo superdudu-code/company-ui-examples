@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <section class="filter-wrap">
-      <NForm :model="searchParams" label-placement="left" class="filter-wrap-grid">
+      <NForm :model="searchParams" label-placement="left" size="small" label-width="70px" class="filter-wrap-grid">
         <NFormItem label="商品分类" class="grid-item4">
           <NRadioGroup v-model:value="searchParams.category" clearable placeholder="请输入商品名称">
             <NRadioButton v-for="option in categoryOptions" :key="option.value" :value="option.value">
@@ -11,6 +11,14 @@
         </NFormItem>
         <NFormItem label="商品名称">
           <NInput v-model:value="searchParams.name" clearable placeholder="请输入商品名称" @keyup.enter="handleSearch" />
+        </NFormItem>
+        <NFormItem label="品牌">
+          <PcBrandSelect
+            v-model:value="searchParams.brand"
+            clearable
+            value-field="goodsBrandName"
+            placeholder="请选择品牌"
+          />
         </NFormItem>
         <NFormItem label="商品分类">
           <NSelect v-model:value="searchParams.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
@@ -36,17 +44,18 @@
 
     <section class="tool-wrap">
       <div class="btn-wrap">
-        <NButton type="primary" @click="handleSearch">新增商品</NButton>
-        <NButton type="primary" secondary :disabled="selectIds.length === 0" @click="handleSearch">批量xx操作</NButton>
-        <NButton @click="handleSearch">更次要的</NButton>
+        <NButton type="primary" size="small" @click="handleSearch">新增商品</NButton>
+        <NButton type="primary" size="small" secondary :disabled="selectIds.length === 0" @click="handleSearch">批量xx操作</NButton>
+        <NButton size="small" @click="handleSearch">更次要的</NButton>
       </div>
       <div class="btn-right-wrap">
         <div class="tip">Tips：文字提示~</div>
         <div class="line"></div>
-        <NButton text @click="queryData" data-report-name="刷新">
+        <NButton size="small" text @click="queryData" data-report-name="刷新">
           <NIcon :component="ReloadOutline" :class="{ 'loading-icon': loading }"></NIcon>
         </NButton>
         <NButton
+          size="small"
           text
           tag="a"
           href="https://docs.puture-in.com/docs/dawnwinerp_manual/WorkOrderManagement"
@@ -71,7 +80,7 @@
         size="small"
         :row-key="row => row.id"
         :row-props="rowProps"
-        :scroll-x="1160"
+        :scroll-x="2000"
         @update:checked-row-keys="handleCheckedRowChange"
       />
     </section>
@@ -102,9 +111,9 @@
 
 <script setup lang="tsx">
 import { onBeforeUnmount } from 'vue'
-import { usePageSearch, useTableSelect } from '@puture-ui/capabilities'
-import { PcCountrySelect } from '@puture-ui/business'
-import { PcTableImagePreview } from '@puture-ui/ui'
+import { moneyFormat, usePageSearch, useTableSelect } from '@puture-ui/capabilities'
+import { PcBrandSelect, PcCountrySelect } from '@puture-ui/business'
+import { PcTableImagePreview, PcTableOrdering } from '@puture-ui/ui'
 import type { DataTableColumns } from 'naive-ui'
 import {
   NButton,
@@ -120,25 +129,29 @@ import {
   NRadioGroup,
   NRadioButton
 } from 'naive-ui'
-import { productStatusText, type ProductCategory, type ProductItem, type ProductStatus } from '@/api/list/mock'
+import {
+  productStatusText,
+  type ProductCategory,
+  type ProductItem,
+  type ProductStatus,
+  type ProductTag,
+  type ProductType
+} from '@/api/list/mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
-import { queryProductList } from '@/api/list/api'
+import { queryProductList, type ProductPageParams } from '@/api/list/api'
 
 type SearchForm = {
   name: string
+  brand: string | null
   category: ProductCategory | null
   country: string | null
   status: ProductStatus | null
   stock: 'all' | 'in-stock' | 'empty'
 }
 
-type ProductPageParams = {
-  current: number
-  size: number
-}
-
 const defaultSearchParams: SearchForm = {
   name: '',
+  brand: null,
   category: null,
   country: null,
   status: null,
@@ -170,68 +183,21 @@ const statusTagType: Record<ProductStatus, 'success' | 'error' | 'default'> = {
   draft: 'default'
 }
 
-const columns: DataTableColumns<ProductItem> = [
-  { type: 'selection' },
-  {
-    title: '商品信息',
-    key: 'productInfo',
-    minWidth: 260,
-    render(row) {
-      return (
-        <div class="base-table-page__product-info">
-          <PcTableImagePreview url={row.imageUrl} width={48} height={48} fit="cover" lazy />
-          <div class="base-table-page__product-content">
-            <div class="base-table-page__product-name">{row.name}</div>
-            <div class="base-table-page__product-sku">SKU：{row.sku}</div>
-          </div>
-        </div>
-      )
-    }
-  },
-  { title: '产地', key: 'country', width: 120 },
-  { title: '分类', key: 'category', width: 120 },
-  {
-    title: '价格',
-    key: 'price',
-    width: 110,
-    render(row) {
-      return `¥${row.price.toFixed(2)}`
-    }
-  },
-  { title: '库存', key: 'stock', width: 100 },
-  { title: '销量', key: 'sales', width: 100 },
-  {
-    title: '状态',
-    key: 'status',
-    width: 100,
-    render(row) {
-      return <NTag size="small" type={statusTagType[row.status]}>{productStatusText[row.status]}</NTag>
-    }
-  },
-  { title: '更新时间', key: 'updatedAt', width: 130 },
-  {
-    title: '操作',
-    key: 'actions',
-    width: 140,
-    fixed: 'right',
-    render(row) {
-      return (
-        <div class="table-btn-wrap">
-          <NButton text type="primary" onClick={() => handleEdit(row)}>编辑</NButton>
-          <NButton text type="error" onClick={() => handleDelete(row)}>删除</NButton>
-        </div>
-      )
-    }
-  }
-]
+const productTypeTagType: Record<ProductType, 'default' | 'info'> = {
+  普通产品: 'default',
+  组合产品: 'info'
+}
 
-const { selectRows, selectIds, selectOption, handleSelectCall, handleCheckedRowChange, rowProps, handleUnSelect } = useTableSelect<
-  ProductItem,
-  number
->({
-  primaryRowKeyFn: row => row.id
-})
+const productTagType: Record<ProductTag, 'success' | 'error' | 'warning' | 'default'> = {
+  新品: 'success',
+  危险品: 'error',
+  大件: 'warning',
+  xxx: 'default'
+}
 
+/**
+ * 搜索逻辑
+ */
 const {
   loading,
   tableData,
@@ -247,9 +213,127 @@ const {
 } = usePageSearch<ProductPageParams, SearchForm, ProductItem>(queryProductList, {
   defaultPageParams: {
     current: 1,
-    size: 50
+    size: 50,
+    orders: [{ column: 'updatedAt', asc: false }]
   },
   defaultSearchParams
+})
+
+/**
+ * 表格列配置
+ */
+const columns: DataTableColumns<ProductItem> = [
+  { type: 'selection' },
+  {
+    title: '商品信息',
+    key: 'productInfo',
+    minWidth: 260,
+    render(row) {
+      return (
+        <div class="base-table-page__product-info">
+          <PcTableImagePreview url={row.imageUrl} width={38} height={38} fit="cover" lazy />
+          <div class="base-table-page__product-content">
+            <div class="base-table-page__product-name">{row.name}</div>
+            <div class="base-table-page__product-sku">SKU：{row.sku}</div>
+          </div>
+        </div>
+      )
+    }
+  },
+  { title: '品牌', key: 'brand', width: 110 },
+  { title: '型号', key: 'model', width: 132 },
+  { title: '产地', key: 'country', width: 120 },
+  { title: '分类', key: 'category', width: 100 },
+  {
+    title: '产品类型',
+    key: 'productType',
+    width: 110,
+    align: 'center',
+    render(row) {
+      return <NTag size="small" type={productTypeTagType[row.productType]} bordered={false}>{row.productType}</NTag>
+    }
+  },
+  {
+    title: '标签',
+    key: 'tags',
+    width: 220,
+    render(row) {
+      return (
+        <div class="base-table-page__tag-list">
+          {row.tags.map(tag => (
+            <NTag key={tag} size="small" type={productTagType[tag]} bordered={false}>{tag}</NTag>
+          ))}
+        </div>
+      )
+    }
+  },
+  {
+    title: () => (
+      <PcTableOrdering v-model:value={pageParams.value.orders} keyName="price" single onChange={handleSearch}>
+        价格
+      </PcTableOrdering>
+    ),
+    key: 'price',
+    width: 128,
+    align: 'right',
+    render(row) {
+      return moneyFormat(row.price, { preUnit: '¥' })
+    }
+  },
+  { title: '采购员', key: 'purchaser', width: 96 },
+  { title: '开发员', key: 'developer', width: 96 },
+  { title: '库存', key: 'stock', width: 88, align: 'right' },
+  { title: '销量', key: 'sales', width: 88, align: 'right' },
+  {
+    title: '状态',
+    key: 'status',
+    width: 96,
+    align: 'center',
+    render(row) {
+      return (
+        <NTag size="small" type={statusTagType[row.status]}>
+          {productStatusText[row.status]}
+        </NTag>
+      )
+    }
+  },
+  {
+    title: () => (
+      <PcTableOrdering v-model:value={pageParams.value.orders} keyName="updatedAt" single onChange={handleSearch}>
+        更新时间
+      </PcTableOrdering>
+    ),
+    key: 'updatedAt',
+    width: 130
+  },
+  {
+    title: '操作',
+    key: 'actions',
+    width: 140,
+    fixed: 'right',
+    render(row) {
+      return (
+        <div class="table-btn-wrap">
+          <NButton text type="primary" onClick={() => handleEdit(row)}>
+            编辑
+          </NButton>
+          <NButton text type="error" onClick={() => handleDelete(row)}>
+            删除
+          </NButton>
+        </div>
+      )
+    }
+  }
+]
+
+/**
+ * 表格选择逻辑
+ */
+const { selectRows, selectIds, selectOption, handleSelectCall, handleCheckedRowChange, rowProps, handleUnSelect } = useTableSelect<
+  ProductItem,
+  number
+>({
+  primaryRowKeyFn: row => row.id
 })
 
 /** 清空已选数据并执行查询。 */
@@ -301,4 +385,43 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @use '@/styles/base-table-page' as tablePage;
+
+:deep(.page-table) {
+  .base-table-page__product-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .base-table-page__product-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .base-table-page__product-name {
+    overflow: hidden;
+    color: var(--pc-text-color-1);
+    font-weight: var(--pc-font-weight-strong);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .base-table-page__product-sku {
+    overflow: hidden;
+    color: var(--pc-text-color-3);
+    font-size: var(--pc-font-size-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .base-table-page__tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+  }
+}
 </style>

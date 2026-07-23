@@ -11,8 +11,15 @@ type SearchForm = {
   stock: 'all' | 'in-stock' | 'empty'
 }
 
+export type ProductPageParams = PageSearchPageParams & {
+  orders: Array<{
+    column: string
+    asc: boolean
+  }>
+}
+
 export function queryProductList(
-  params: PageSearchQueryParams<PageSearchPageParams, SearchForm>,
+  params: PageSearchQueryParams<ProductPageParams, SearchForm>,
   signal: AbortSignal
 ): Promise<PageSearchResponse<ProductItem>> {
   return new Promise((resolve, reject) => {
@@ -33,11 +40,25 @@ export function queryProductList(
 
         return matchName && matchBrand && matchCategory && matchCountry && matchStatus && matchStock
       })
+      const [order] = params.page.orders
+      const sortedData = [...filteredData]
+      if (order && (order.column === 'price' || order.column === 'updatedAt')) {
+        const column = order.column
+        sortedData.sort((left, right) => {
+          const leftValue = left[column]
+          const rightValue = right[column]
+          const comparison =
+            typeof leftValue === 'number' && typeof rightValue === 'number'
+              ? leftValue - rightValue
+              : String(leftValue).localeCompare(String(rightValue))
+          return order.asc ? comparison : -comparison
+        })
+      }
       const start = (params.page.current - 1) * params.page.size
 
       resolve({
         data: {
-          records: filteredData.slice(start, start + params.page.size),
+          records: sortedData.slice(start, start + params.page.size),
           total: filteredData.length
         }
       })
