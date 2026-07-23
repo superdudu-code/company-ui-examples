@@ -14,7 +14,7 @@
   "dependencies": {
     "@puture-ui/business": "^0.0.13",
     "@puture-ui/capabilities": "^0.0.13",
-    "@puture-ui/ui": "^0.0.15",
+    "@puture-ui/ui": "^0.0.16",
     "@vicons/ionicons5": "^0.13.0",
     "axios": "^1.18.1",
     "dayjs": "^1.11.21",
