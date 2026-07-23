@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <section class="filter-wrap">
-      <NForm :model="searchParams" label-placement="left" class="filter-wrap-grid">
+      <NForm :model="searchParams" label-placement="left" size="small" class="filter-wrap-grid">
         <NFormItem label="商品分类" class="grid-item4">
           <NRadioGroup v-model:value="searchParams.category" clearable placeholder="请输入商品名称">
             <NRadioButton v-for="option in categoryOptions" :key="option.value" :value="option.value">
@@ -233,7 +233,11 @@ const columns: DataTableColumns<ProductItem> = [
     width: 96,
     align: 'center',
     render(row) {
-      return <NTag size="small" type={statusTagType[row.status]}>{productStatusText[row.status]}</NTag>
+      return (
+        <NTag size="small" type={statusTagType[row.status]}>
+          {productStatusText[row.status]}
+        </NTag>
+      )
     }
   },
   { title: '更新时间', key: 'updatedAt', width: 130 },
@@ -245,8 +249,12 @@ const columns: DataTableColumns<ProductItem> = [
     render(row) {
       return (
         <div class="table-btn-wrap">
-          <NButton text type="primary" onClick={() => handleEdit(row)}>编辑</NButton>
-          <NButton text type="error" onClick={() => handleDelete(row)}>删除</NButton>
+          <NButton text type="primary" onClick={() => handleEdit(row)}>
+            编辑
+          </NButton>
+          <NButton text type="error" onClick={() => handleDelete(row)}>
+            删除
+          </NButton>
         </div>
       )
     }
@@ -312,4 +320,36 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @use '@/styles/base-table-page' as tablePage;
+
+:deep(.page-table) {
+  .base-table-page__product-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .base-table-page__product-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .base-table-page__product-name {
+    overflow: hidden;
+    color: var(--pc-text-color-1);
+    font-weight: var(--pc-font-weight-strong);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .base-table-page__product-sku {
+    overflow: hidden;
+    color: var(--pc-text-color-3);
+    font-size: var(--pc-font-size-mini);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 </style>
