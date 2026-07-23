@@ -9,5 +9,5 @@
   padding: 20px 24px;
   margin-bottom: 16px;
 }
-.page__section h2 { margin: 0 0 16px; font-size: var(--pc-font-size-huge); color: var(--pc-text-color-1); }
-.page__hint { margin: 8px 0 0; color: var(--pc-text-color-3); font-size: var(--pc-font-size-mini); }
+.page__section h2 { margin: 0 0 16px; font-size: var(--pc-font-size-large); color: var(--pc-text-color-1); }
+.page__hint { margin: 8px 0 0; color: var(--pc-text-color-3); font-size: var(--pc-font-size-small); }

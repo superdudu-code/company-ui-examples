@@ -347,7 +347,7 @@ onBeforeUnmount(() => {
   .base-table-page__product-sku {
     overflow: hidden;
     color: var(--pc-text-color-3);
-    font-size: var(--pc-font-size-mini);
+    font-size: var(--pc-font-size-small);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
