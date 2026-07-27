@@ -44,7 +44,7 @@
 
     <section class="tool-wrap">
       <div class="btn-wrap">
-        <NButton type="primary" size="small" @click="handleSearch">新增商品</NButton>
+        <NButton type="primary" size="small" @click="handleCreate">新增商品</NButton>
         <NButton type="primary" size="small" secondary :disabled="selectIds.length === 0" @click="handleSearch">批量xx操作</NButton>
         <NButton size="small" @click="handleSearch">更次要的</NButton>
       </div>
@@ -106,11 +106,13 @@
         @update:page-size="handlePageSizeChange"
       />
     </section>
+
+    <BaseDialogForm ref="baseDialogFormRef" @success="queryWithSelectionClear" />
   </div>
 </template>
 
 <script setup lang="tsx">
-import { onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { moneyFormat, usePageSearch, useTableSelect } from '@puture-ui/capabilities'
 import { PcBrandSelect, PcCountrySelect } from '@puture-ui/business'
 import { PcTableImagePreview, PcTableOrdering } from '@puture-ui/ui'
@@ -139,6 +141,7 @@ import {
 } from '@/api/list/mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
 import { queryProductList, type ProductPageParams } from '@/api/list/api'
+import BaseDialogForm from './components/base-dialog-form/index.vue'
 
 type SearchForm = {
   name: string
@@ -335,6 +338,7 @@ const { selectRows, selectIds, selectOption, handleSelectCall, handleCheckedRowC
 >({
   primaryRowKeyFn: row => row.id
 })
+const baseDialogFormRef = ref<InstanceType<typeof BaseDialogForm> | null>(null)
 
 /** 清空已选数据并执行查询。 */
 function queryWithSelectionClear() {
@@ -355,9 +359,14 @@ function handleReset() {
   return search()
 }
 
-/** 提示当前编辑的数据。 */
+/** 打开新增商品弹窗。 */
+function handleCreate() {
+  baseDialogFormRef.value?.open('create')
+}
+
+/** 打开编辑商品弹窗。 */
 function handleEdit(row: ProductItem) {
-  window.alert(`编辑：${row.name}`)
+  baseDialogFormRef.value?.open('edit', row)
 }
 
 /** 提示当前删除的数据。 */

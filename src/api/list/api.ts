@@ -18,6 +18,10 @@ export type ProductPageParams = PageSearchPageParams & {
   }>
 }
 
+export type ProductFormPayload = Pick<ProductItem, 'name' | 'brand' | 'price'> & {
+  id?: number
+}
+
 export function queryProductList(
   params: PageSearchQueryParams<ProductPageParams, SearchForm>,
   signal: AbortSignal
@@ -72,5 +76,55 @@ export function queryProductList(
       },
       { once: true }
     )
+  })
+}
+
+/** 保存新增或编辑的商品，并返回最新商品数据。 */
+export function saveProduct(params: ProductFormPayload): Promise<ProductItem> {
+  return new Promise((resolve, reject) => {
+    window.setTimeout(() => {
+      const updatedAt = new Date().toISOString().slice(0, 10)
+
+      if (params.id !== undefined) {
+        const product = productList.find(item => item.id === params.id)
+        if (!product) {
+          reject(new Error('未找到需要编辑的商品'))
+          return
+        }
+
+        Object.assign(product, {
+          name: params.name,
+          brand: params.brand,
+          price: params.price,
+          updatedAt
+        })
+        resolve(product)
+        return
+      }
+
+      const id = productList.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1
+      const product: ProductItem = {
+        id,
+        name: params.name,
+        sku: `SKU-${String(100000 + id)}`,
+        imageUrl: '',
+        brand: params.brand,
+        model: '-',
+        category: '生活百货',
+        country: 'CN',
+        purchaser: '-',
+        developer: '-',
+        productType: '普通产品',
+        tags: [],
+        price: params.price,
+        stock: 0,
+        status: 'draft',
+        sales: 0,
+        updatedAt
+      }
+
+      productList.unshift(product)
+      resolve(product)
+    }, 480)
   })
 }

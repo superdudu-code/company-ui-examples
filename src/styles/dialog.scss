@@ -1,0 +1,24 @@
+// 添加 custom-style-dialog 类名的弹窗统一使用此结构样式。
+.n-modal.n-dialog.custom-style-dialog {
+  --n-padding: 0;
+  --n-close-margin: 12px 16px 0;
+
+  box-shadow: var(--pc-shadow-3);
+
+  .n-dialog__title {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--pc-border-color-divider, #dedede);
+  }
+
+  .n-dialog__content {
+    max-height: 70vh;
+    margin: 0;
+    padding: 12px 16px;
+    overflow-y: auto;
+  }
+
+  .n-dialog__action {
+    padding: 12px 16px;
+    border-top: 1px solid var(--pc-border-color-divider, #dedede);
+  }
+}

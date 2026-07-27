@@ -1,6 +1,24 @@
 {
-  "generatedAt": "2026-07-24T02:00:58.151Z",
+  "generatedAt": "2026-07-27T02:54:38.139Z",
   "templates": [
+    {
+      "name": "base-dialog-form",
+      "title": "基础弹窗表单",
+      "description": "通过命令式 open 入口承载新增和编辑，包含表单初始化、校验、提交反馈与成功刷新事件",
+      "whenToUse": "列表页中的简单新增、编辑或配置操作，字段较少且可在单个弹窗内完成",
+      "entryUrl": "/templates/base-dialog-form.vue",
+      "sourceUrl": "https://ui-test-01.external.sub.puture-in.com/example/templates/base-dialog-form.vue",
+      "designGuideUrl": "https://ui-test-01.external.sub.puture-in.com/design/base-dialog-form.md",
+      "route": "/list/base-table",
+      "tags": [
+        "弹窗表单",
+        "新增",
+        "编辑",
+        "表单校验",
+        "提交反馈"
+      ],
+      "version": "e5cbda33853f"
+    },
     {
       "name": "list-base-table",
       "title": "基础列表页",
@@ -16,7 +34,7 @@
         "分页",
         "批量操作"
       ],
-      "version": "dac824db01a7"
+      "version": "977bc073dcf8"
     }
   ]
 }

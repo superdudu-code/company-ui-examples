@@ -1,0 +1,11 @@
+{
+  "name": "base-dialog-form",
+  "title": "基础弹窗表单",
+  "description": "通过命令式 open 入口承载新增和编辑，包含表单初始化、校验、提交反馈与成功刷新事件",
+  "whenToUse": "列表页中的简单新增、编辑或配置操作，字段较少且可在单个弹窗内完成",
+  "entryLocal": "src/views/list/base-table/components/base-dialog-form/index.vue",
+  "entryUrl": "/templates/base-dialog-form.vue",
+  "designGuideUrl": "https://ui-test-01.external.sub.puture-in.com/design/base-dialog-form.md",
+  "route": "/list/base-table",
+  "tags": ["弹窗表单", "新增", "编辑", "表单校验", "提交反馈"]
+}
