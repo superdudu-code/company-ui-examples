@@ -107,6 +107,7 @@
       />
     </section>
 
+    <!-- 新增/编辑商品弹窗 -->
     <BaseDialogForm ref="baseDialogFormRef" @success="queryWithSelectionClear" />
   </div>
 </template>
