@@ -1,0 +1,10 @@
+{
+  "name": "page-scroll-table",
+  "title": "页面滚动表格页",
+  "description": "页面整体自然滚动，支持扩展内容、操作栏与表头吸顶、分页吸底的后台管理列表页",
+  "whenToUse": "筛选条件较多，或表格上方需要放置数据概览、统计、图表等扩展内容的列表场景",
+  "entryLocal": "src/views/list/page-scroll-table/index.vue",
+  "entryUrl": "/templates/page-scroll-table.vue",
+  "route": "/list/page-scroll-table",
+  "tags": ["页面滚动", "吸顶表头", "扩展区域", "分页", "批量操作"]
+}

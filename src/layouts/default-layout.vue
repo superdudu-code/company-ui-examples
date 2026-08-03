@@ -49,7 +49,7 @@ const keyword = ref("")
   --example-aside-width: 146px;
   --example-header-height: 48px;
 
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   color: var(--pc-text-color-1);
@@ -57,8 +57,6 @@ const keyword = ref("")
 }
 
 .app-header {
-  position: sticky;
-  top: 0;
   z-index: 30;
   height: var(--example-header-height);
   background: var(--pc-fill-card);
@@ -110,13 +108,13 @@ const keyword = ref("")
 }
 
 .app-body {
+  height: 0;
   flex: 1;
-  min-height: 0;
   display: grid;
   grid-template-columns: var(--example-aside-width) minmax(0, 1fr);
 }
 
 .app-main {
-  min-width: 0;
+    height: calc(100vh - var(--example-header-height, 64px));
 }
 </style>

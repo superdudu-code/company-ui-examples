@@ -58,8 +58,6 @@ const menuItems = computed<LayoutMenuItem[]>(() => {
 
 <style scoped lang="scss">
 .aside-nav {
-  position: sticky;
-  top: var(--example-header-height, 64px);
   align-self: start;
   height: calc(100vh - var(--example-header-height, 64px));
   overflow-y: auto;

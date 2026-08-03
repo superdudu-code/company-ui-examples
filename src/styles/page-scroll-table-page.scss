@@ -1,0 +1,85 @@
+.page-container {
+  --page-scroll-table-top: 0px;
+  --page-scroll-table-toolbar-height: 0px;
+
+  display: block;
+  overflow-y: auto;
+}
+
+.table-section {
+  position: relative;
+}
+
+.tool-wrap {
+  position: sticky;
+  top: calc(0px - var(--padding));
+  z-index: 15;
+  background-color: #f0f2f5;
+}
+
+.table-wrap {
+  --page-scroll-table-header-height: 0px;
+
+  position: relative;
+  height: auto;
+  overflow: visible;
+  overflow-anchor: none;
+  flex: none;
+
+  &::before {
+    display: none;
+    height: var(--page-scroll-table-header-height);
+    content: '';
+  }
+
+  :deep(.page-table) {
+    height: auto;
+  }
+
+  &.header-fixed {
+    &::before {
+      display: block;
+    }
+
+    :deep(.n-data-table-thead) {
+      position: fixed;
+      top: calc(var(--page-scroll-table-top) + var(--page-scroll-table-toolbar-height));
+      z-index: 20;
+      overflow-x: auto;
+      background-color: var(--pc-fill-card);
+
+      .n-data-table-tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      .n-data-table-th {
+        box-sizing: border-box;
+        width: auto;
+      }
+
+      &::-webkit-scrollbar {
+        height: 0;
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: #bfbfbf;
+        cursor: pointer;
+      }
+    }
+
+    &:hover :deep(.n-data-table-thead::-webkit-scrollbar) {
+      height: 4px;
+    }
+  }
+}
+
+.page-wrap {
+  position: sticky;
+  bottom: calc(0px - var(--padding));
+  z-index: 10;
+  border-top: 1px solid var(--pc-border-color-divider);
+}

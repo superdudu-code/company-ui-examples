@@ -27,6 +27,14 @@ export const routes: RouteRecordRaw[] = [
         meta: {
           title: '基础表格页'
         }
+      },
+      {
+        path: "/list/page-scroll-table",
+        name: "ListPageScrollTable",
+        component: () => import("@/views/list/page-scroll-table/index.vue"),
+        meta: {
+          title: '页面滚动表格页'
+        }
       }
     ]
   },
