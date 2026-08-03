@@ -221,7 +221,7 @@ const {
 })
 
 const columns: DataTableColumns<ProductItem> = [
-  { type: 'selection' },
+  { type: 'selection', fixed: 'left' },
   {
     title: '商品信息',
     key: 'productInfo',
@@ -395,7 +395,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/base-table-page' as baseTablePage;
 @use '@/styles/page-scroll-table-page' as pageScrollTablePage;
 
 :deep(.page-table) {
