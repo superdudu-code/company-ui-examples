@@ -14,6 +14,7 @@ export function usePageScrollTable() {
   let tableInner: HTMLElement | null = null
   let tableScrollContainer: HTMLElement | null = null
   let resizeObserver: ResizeObserver | null = null
+  let headerMutationObserver: MutationObserver | null = null
   let animationFrameId: number | null = null
   const originalHeaderCellWidths = new Map<HTMLTableCellElement, { value: string; priority: string }>()
 
@@ -27,14 +28,18 @@ export function usePageScrollTable() {
 
     const columnWidths = Array.from(tableColumns, tableColumn => tableColumn.getBoundingClientRect().width)
     headerCells.forEach((headerCell, index) => {
+      const width = `${columnWidths[index]}px`
+      if (headerCell.style.width === width) return
+
       if (!originalHeaderCellWidths.has(headerCell)) {
         originalHeaderCellWidths.set(headerCell, {
           value: headerCell.style.getPropertyValue('width'),
           priority: headerCell.style.getPropertyPriority('width')
         })
       }
-      headerCell.style.width = `${columnWidths[index]}px`
+      headerCell.style.width = width
     })
+    headerMutationObserver?.takeRecords()
   }
 
   /** 清理吸顶表头写入的列宽并恢复原始样式。 */
@@ -116,7 +121,11 @@ export function usePageScrollTable() {
     }
 
     if (nextHeaderFixed) {
-      void nextTick(updateHeaderGeometry)
+      void nextTick(() => {
+        if (!headerFixed.value) return
+        syncHeaderColumnWidths()
+        updateHeaderGeometry()
+      })
     }
   }
 
@@ -163,6 +172,18 @@ export function usePageScrollTable() {
     resizeObserver.observe(tableContainer)
     resizeObserver.observe(tableHeader)
 
+    // Naive UI 会在勾选、排序等状态变化时重写表头单元格样式。
+    headerMutationObserver = new MutationObserver(mutations => {
+      if (!headerFixed.value) return
+
+      const headerChanged = mutations.some(
+        mutation =>
+          mutation.type === 'childList' || (mutation.target !== tableHeader && mutation.target !== tableHeaderRow)
+      )
+      if (headerChanged) scheduleStickyUpdate()
+    })
+    headerMutationObserver.observe(tableHeader, { attributes: true, childList: true, subtree: true })
+
     updateHeaderGeometry()
     scheduleStickyUpdate()
   }
@@ -175,6 +196,7 @@ export function usePageScrollTable() {
     tableHeader?.removeEventListener('scroll', handleFixedHeaderScroll)
     window.removeEventListener('resize', scheduleStickyUpdate)
     resizeObserver?.disconnect()
+    headerMutationObserver?.disconnect()
 
     if (animationFrameId !== null) {
       window.cancelAnimationFrame(animationFrameId)
