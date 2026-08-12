@@ -27,13 +27,7 @@
         <div class="btn-right-wrap">
           <div class="tip">Tips：鼠标移到表格区域，按住 shift + 鼠标滚轮，可以直接横向滚动噢~</div>
           <div class="line"></div>
-          <NButton size="small" secondary @click="openColumnCustomizer">
-            <template #icon>
-              <NIcon :component="OptionsOutline"></NIcon>
-            </template>
-            列配置
-          </NButton>
-          <NButton size="small" text @click="queryData" data-report-name="刷新">
+          <NButton size="small" text @click="queryData" data-report-name="刷新" title="刷新">
             <NIcon :component="ReloadOutline" :class="{ 'loading-icon': loading }"></NIcon>
           </NButton>
           <NButton
@@ -43,8 +37,12 @@
             href="https://docs.puture-in.com/docs/dawnwinerp_manual/WorkOrderManagement"
             target="_blank"
             data-report-name="帮助文档"
+            title="帮助文档"
           >
             <NIcon :component="HelpCircleOutline"></NIcon>
+          </NButton>
+          <NButton size="small" text title="列配置" @click="openColumnCustomizer">
+            <NIcon :component="SettingsOutline"></NIcon>
           </NButton>
         </div>
       </section>
@@ -138,7 +136,7 @@ import {
   NRadioButton
 } from 'naive-ui'
 import { productStatusText, type ProductItem } from '@/api/list/mock'
-import { ChevronDown, HelpCircleOutline, OptionsOutline, ReloadOutline } from '@vicons/ionicons5'
+import { ChevronDown, HelpCircleOutline, OptionsOutline, ReloadOutline, SettingsOutline } from '@vicons/ionicons5'
 import { queryProductList, type ProductPageParams } from '@/api/list/api'
 import {
   defaultProductSearchParams,
@@ -195,41 +193,21 @@ const searchFields = [
     key: 'brand',
     label: '品牌',
     render(model) {
-      return (
-        <PcBrandSelect
-          v-model:value={model.brand}
-          clearable
-          value-field="goodsBrandName"
-          placeholder="请选择品牌"
-        />
-      )
+      return <PcBrandSelect v-model:value={model.brand} clearable value-field="goodsBrandName" placeholder="请选择品牌" />
     }
   },
   {
     key: 'country',
     label: '国家',
     render(model) {
-      return (
-        <PcCountrySelect
-          v-model:value={model.country}
-          clearable
-          placeholder="请选择国家"
-        />
-      )
+      return <PcCountrySelect v-model:value={model.country} clearable placeholder="请选择国家" />
     }
   },
   {
     key: 'status',
     label: '商品状态',
     render(model) {
-      return (
-        <NSelect
-          v-model:value={model.status}
-          clearable
-          options={productStatusOptions}
-          placeholder="请选择商品状态"
-        />
-      )
+      return <NSelect v-model:value={model.status} clearable options={productStatusOptions} placeholder="请选择商品状态" />
     }
   }
 ] satisfies PcSearchFormFields<ProductSearchForm>
@@ -295,7 +273,11 @@ const columns: PcTableCustomColumns<ProductItem> = [
       group: '商品属性'
     },
     render(row) {
-      return <NTag size="small" type={productTypeTagType[row.productType]} bordered={false}>{row.productType}</NTag>
+      return (
+        <NTag size="small" type={productTypeTagType[row.productType]} bordered={false}>
+          {row.productType}
+        </NTag>
+      )
     }
   },
   {
@@ -309,7 +291,9 @@ const columns: PcTableCustomColumns<ProductItem> = [
       return (
         <div class="base-table-page__tag-list">
           {row.tags.map(tag => (
-            <NTag key={tag} size="small" type={productTagType[tag]} bordered={false}>{tag}</NTag>
+            <NTag key={tag} size="small" type={productTagType[tag]} bordered={false}>
+              {tag}
+            </NTag>
           ))}
         </div>
       )
