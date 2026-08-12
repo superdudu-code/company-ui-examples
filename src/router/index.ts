@@ -29,6 +29,14 @@ export const routes: RouteRecordRaw[] = [
         }
       },
       {
+        path: "/list/base-customizable-table",
+        name: "ListBaseCustomizableTable",
+        component: () => import("@/views/list/base-customizable-table/index.vue"),
+        meta: {
+          title: '基础表格-可自定义'
+        }
+      },
+      {
         path: "/list/page-scroll-table",
         name: "ListPageScrollTable",
         component: () => import("@/views/list/page-scroll-table/index.vue"),

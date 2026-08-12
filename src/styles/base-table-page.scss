@@ -72,16 +72,19 @@
       margin: 0 10px;
     }
     .n-button {
-      font-size: 16px;
       color: var(--text-color-secondary);
       padding: 6px 8px;
       border-radius: 3px;
+      .n-icon {
+        font-size: 16px;
+      }
       &:hover {
         background-color: #eceded;
       }
     }
     .tip {
       color: var(--pc-text-color-3);
+      font-size: 12px;
     }
   }
   .loading-icon {

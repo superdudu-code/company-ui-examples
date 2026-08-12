@@ -4,7 +4,7 @@
       <NForm :model="searchParams" label-placement="left" size="small" label-width="70px" class="filter-wrap-grid">
         <NFormItem label="商品分类" class="grid-item4">
           <NRadioGroup v-model:value="searchParams.category" clearable placeholder="请输入商品名称">
-            <NRadioButton v-for="option in categoryOptions" :key="option.value" :value="option.value">
+            <NRadioButton v-for="option in productCategoryOptions" :key="option.value" :value="option.value">
               {{ option.label }}
             </NRadioButton>
           </NRadioGroup>
@@ -16,19 +16,19 @@
           <PcBrandSelect v-model:value="searchParams.brand" clearable value-field="goodsBrandName" placeholder="请选择品牌" />
         </NFormItem>
         <NFormItem label="商品分类">
-          <NSelect v-model:value="searchParams.category" clearable :options="categoryOptions" placeholder="请选择商品分类" />
+          <NSelect v-model:value="searchParams.category" clearable :options="productCategoryOptions" placeholder="请选择商品分类" />
         </NFormItem>
         <NFormItem label="国家">
           <PcCountrySelect v-model:value="searchParams.country" placeholder="请选择国家" />
         </NFormItem>
         <NFormItem label="商品状态">
-          <NSelect v-model:value="searchParams.status" clearable :options="statusOptions" placeholder="请选择商品状态" />
+          <NSelect v-model:value="searchParams.status" clearable :options="productStatusOptions" placeholder="请选择商品状态" />
         </NFormItem>
         <NFormItem label="库存状态">
-          <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
+          <NSelect v-model:value="searchParams.stock" :options="productStockOptions" placeholder="请选择库存状态" />
         </NFormItem>
         <NFormItem label="库存状态">
-          <NSelect v-model:value="searchParams.stock" :options="stockOptions" placeholder="请选择库存状态" />
+          <NSelect v-model:value="searchParams.stock" :options="productStockOptions" placeholder="请选择库存状态" />
         </NFormItem>
         <NFormItem label="">
           <NButton type="primary" @click="handleSearch">查询</NButton>
@@ -130,74 +130,22 @@ import {
   NRadioGroup,
   NRadioButton
 } from 'naive-ui'
-import {
-  productStatusText,
-  type ProductCategory,
-  type ProductItem,
-  type ProductStatus,
-  type ProductTag,
-  type ProductType
-} from '@/api/list/mock'
+import { productStatusText, type ProductItem } from '@/api/list/mock'
 import { ChevronDown, HelpCircleOutline, ReloadOutline } from '@vicons/ionicons5'
 import { queryProductList, type ProductPageParams } from '@/api/list/api'
 import { usePageScrollTable } from '@/hooks/use-page-scroll-table'
+import {
+  defaultProductSearchParams,
+  productCategoryOptions,
+  productStatusOptions,
+  productStatusTagType,
+  productStockOptions,
+  productTagType,
+  productTypeTagType,
+  type ProductSearchForm
+} from '../product-list-config'
 import BaseDialogForm from '../base-table/components/base-dialog-form/index.vue'
 import ExtensionWrap from './components/extension-wrap.vue'
-
-type SearchForm = {
-  name: string
-  brand: string | null
-  category: ProductCategory | null
-  country: string | null
-  status: ProductStatus | null
-  stock: 'all' | 'in-stock' | 'empty'
-}
-
-const defaultSearchParams: SearchForm = {
-  name: '',
-  brand: null,
-  category: null,
-  country: null,
-  status: null,
-  stock: 'all'
-}
-
-const categoryOptions = [
-  { label: '家用电器', value: '家用电器' },
-  { label: '数码配件', value: '数码配件' },
-  { label: '办公用品', value: '办公用品' },
-  { label: '生活百货', value: '生活百货' }
-] satisfies Array<{ label: ProductCategory; value: ProductCategory }>
-
-const statusOptions = [
-  { label: '在售', value: 'selling' },
-  { label: '售罄', value: 'sold-out' },
-  { label: '草稿', value: 'draft' }
-] satisfies Array<{ label: string; value: ProductStatus }>
-
-const stockOptions = [
-  { label: '全部库存', value: 'all' },
-  { label: '有库存', value: 'in-stock' },
-  { label: '无库存', value: 'empty' }
-] satisfies Array<{ label: string; value: SearchForm['stock'] }>
-
-const statusTagType: Record<ProductStatus, 'success' | 'error' | 'default'> = {
-  selling: 'success',
-  'sold-out': 'error',
-  draft: 'default'
-}
-
-const productTypeTagType: Record<ProductType, 'default' | 'info'> = {
-  普通产品: 'default',
-  组合产品: 'info'
-}
-
-const productTagType: Record<ProductTag, 'success' | 'error' | 'warning' | 'default'> = {
-  新品: 'success',
-  危险品: 'error',
-  大件: 'warning',
-  xxx: 'default'
-}
 
 const {
   loading,
@@ -211,17 +159,17 @@ const {
   handlePageChange: changePage,
   handlePageSizeChange: changePageSize,
   cancelRequest
-} = usePageSearch<ProductPageParams, SearchForm, ProductItem>(queryProductList, {
+} = usePageSearch<ProductPageParams, ProductSearchForm, ProductItem>(queryProductList, {
   defaultPageParams: {
     current: 1,
     size: 50,
     orders: [{ column: 'updatedAt', asc: false }]
   },
-  defaultSearchParams
+  defaultSearchParams: defaultProductSearchParams
 })
 
 const columns: DataTableColumns<ProductItem> = [
-  { type: 'selection' },
+  { type: 'selection', fixed: 'left' },
   {
     title: '商品信息',
     key: 'productInfo',
@@ -295,7 +243,7 @@ const columns: DataTableColumns<ProductItem> = [
     align: 'center',
     render(row) {
       return (
-        <NTag size="small" type={statusTagType[row.status]}>
+        <NTag size="small" type={productStatusTagType[row.status]}>
           {productStatusText[row.status]}
         </NTag>
       )
@@ -395,7 +343,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '@/styles/base-table-page' as baseTablePage;
 @use '@/styles/page-scroll-table-page' as pageScrollTablePage;
 
 :deep(.page-table) {
