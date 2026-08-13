@@ -10,10 +10,11 @@
 6. 如果字段含义、数据格式、接口约定或业务规则不明确，且会影响实现正确性，应先向用户询问，不要擅自假设。只有在项目已有兼容逻辑、需求明确要求，或真实调用场景需要时，才添加最小范围的兼容处理。
 7. 输出代码修改时，优先给出实际可执行、已接入项目的修改，避免示例代码、伪代码或额外无关文件。
 
+<!-- #region puture-ui-integration -->
 ## 组件/能力规范
 本项目使用 `@puture-ui/*` 组件库。组件库已经覆盖的场景必须优先使用对应的公开导出，禁止通过 Naive UI 原生组件绕过已有封装。
 
-完整能力列表和公开导出以 https://ui-test-01.external.sub.puture-in.com/llms.txt 为准；需要具体 API、行为和示例时，再阅读 https://ui-test-01.external.sub.puture-in.com/llms-full.txt 及对应 Markdown。不要在本文件中维护组件名称清单。
+AI 指南与接入说明以 https://ui-test-01.external.sub.puture-in.com/ai/ 为人工入口，以 https://ui-test-01.external.sub.puture-in.com/ai/index.md 为机器可读入口。完整能力列表和公开导出以 https://ui-test-01.external.sub.puture-in.com/llms.txt 为准。生成代码前必须阅读 AI 代码生成规则和组件选择指南；迁移旧页面时还必须阅读迁移指南和常见反模式。需要具体 API、行为和示例时，再阅读候选组件对应的 Markdown。不要在本文件中维护组件名称清单。
 
 组件只能从包名根路径导入，禁止从 `@puture-ui/*/src/...` 深路径导入。
 
@@ -24,15 +25,22 @@
 在编写 Vue 前端代码前，先阅读：
 
 1. 当前项目根目录及目标目录适用的 `AGENTS.md`。
-2. `@puture-ui/ui`、`@puture-ui/business`、`@puture-ui/capabilities` 的公开入口和相关实现。
-3. https://ui-test-01.external.sub.puture-in.com/llms-full.txt。
-4. 与候选组件对应的组件 Markdown 和设计指南。
+2. https://ui-test-01.external.sub.puture-in.com/ai/index.md。
+3. https://ui-test-01.external.sub.puture-in.com/llms.txt。
+4. https://ui-test-01.external.sub.puture-in.com/ai/code-generation-rules.md。
+5. https://ui-test-01.external.sub.puture-in.com/ai/component-selection-guide.md。
+6. 与候选组件对应的组件 Markdown、公开类型和示例。
+7. 迁移旧页面时，再读取 https://ui-test-01.external.sub.puture-in.com/ai/migration-guide.md 和 https://ui-test-01.external.sub.puture-in.com/ai/anti-patterns.md。
 
-不能只根据模板源码或组件名称猜测行为。需要确认时，继续阅读组件实现、类型定义和示例源码，重点核对 `v-model` 值、标签字段、远程请求参数、响应结构、分页和请求实例注入方式。
+不能只根据模板源码、组件名称或宽联合类型猜测行为。需要确认时，继续阅读组件实现、类型定义和示例源码，重点核对 `v-model` 值、标签字段、远程请求参数、响应结构、分页和请求实例注入方式。
 
-单个组件文档：
-https://ui-test-01.external.sub.puture-in.com/components/<name>.md
-（如 base-select.md、country-select.md、date-range-picker.md、search-form.md）
+查询模型默认与接口 DTO 同名、同类型。多选组件默认直接绑定数组字段，不创建无消费方的名称字段，不做无依据的 split/join，不滥用 `paramKeys`、`multipleField` 或 `change`。字段含义或接口格式不明确时先提问。
+
+候选组件和能力的 Markdown 地址必须从 https://ui-test-01.external.sub.puture-in.com/llms.txt 的对应索引获取。禁止根据组件名称自行拼接或猜测文档路径。
+
+### 文档访问失败
+
+若 AI 因网络或权限限制无法读取上述 URL，不得跳过规则或假装已经读取，也不得只根据组件名称和宽联合类型生成代码。优先读取项目内与当前 `@puture-ui/*` 依赖版本一致的文档镜像；没有镜像时，可以核对当前安装版本在 `node_modules` 中的公开导出、类型定义、实现和示例，但不能把类型定义当作完整使用指南。默认值、值模型、请求协议或业务字段语义仍无法确认时，必须说明缺失的信息并向用户提问。
 
 ### 页面模板检索
 
@@ -48,24 +56,25 @@ https://ui-test-01.external.sub.puture-in.com/components/<name>.md
 
 4. 再读取条目中的 `sourceUrl` 获取 Vue 模板源码。
    旧清单若缺少 `sourceUrl`，使用：
-   https://ui-test-01.external.sub.puture-in.com/example/templates/<name>.vue
+   `https://ui-test-01.external.sub.puture-in.com/example/templates/<name>.vue`
    （`<name>` 即 `templates.json` 中该条目的 `name` 字段）
 
 5. 在模板源码基础上按需求改字段、改列、改交互，不要从零拼装。
    模板中出现的具体控件（NSelect / NRadioGroup 等）仅是示例填充，
-   实际筛选项按 llms-full.txt 的组件优先级规则重新选型，不要照抄。
+   实际筛选项按组件选择指南和候选组件文档重新选型，不要照抄。
 
 6. 无匹配模板时，退回到组件粒度：
-   参考 llms-full.txt 与 components/<name>.md 自行组合 Pc* 组件；
-   通用设计规范（颜色 / 尺寸 / 字体等）已包含在 llms-full.txt 里。
+   参考 https://ui-test-01.external.sub.puture-in.com/llms.txt、AI 代码生成规则与索引中的候选组件 Markdown 自行组合 Pc* 组件；
+   通用设计规范（颜色 / 尺寸 / 字体等）可从 https://ui-test-01.external.sub.puture-in.com/ai/llms-full.txt 获取。
 
 ### 选组件流程
 
-1. 先按上表判断是否属于组件库已覆盖的场景。
+1. 从 https://ui-test-01.external.sub.puture-in.com/llms.txt 判断组件库是否已覆盖当前场景，并按组件选择指南确认包边界。
 2. 是 → 阅读对应组件文档和实现，使用文档索引中的公开导出。
-3. 需要远程数据、分页查询、表格选中或格式化 → 先从 `llms.txt` / `llms-full.txt` 找到对应能力，再确认请求注入、响应结构、取消请求和字段格式。
+3. 需要远程数据、分页查询、表格选中或格式化 → 先从 https://ui-test-01.external.sub.puture-in.com/llms.txt 或 https://ui-test-01.external.sub.puture-in.com/ai/llms-full.txt 找到对应能力，再确认请求注入、响应结构、取消请求和字段格式。
 4. 金额展示 → 优先使用能力文档中的金额格式化能力；数量、库存等非金额数值不能直接套用金额精度，先确认业务精度。
-7. 否 → 才允许使用 Naive UI 原生组件，并在方案中说明组件库没有对应能力。
+5. 否 → 才允许使用 Naive UI 原生组件，并在方案中说明组件库没有对应能力。
+<!-- #endregion puture-ui-integration -->
 
 ## 页面方案确认流程
 
