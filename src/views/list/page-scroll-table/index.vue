@@ -47,7 +47,7 @@
           <NButton size="small" @click="handleSearch">更次要的</NButton>
         </div>
         <div class="btn-right-wrap">
-          <div class="tip">Tips：页面滚动后，操作栏和表头会固定在顶部</div>
+          <div class="tip">Tips：鼠标移到表格区域，按住 shift + 鼠标滚轮，可以直接横向滚动噢~</div>
           <div class="line"></div>
           <NButton size="small" text @click="queryData" data-report-name="刷新">
             <NIcon :component="ReloadOutline" :class="{ 'loading-icon': loading }"></NIcon>

@@ -15,6 +15,7 @@ export function usePageScrollTable() {
   let tableScrollContainer: HTMLElement | null = null
   let resizeObserver: ResizeObserver | null = null
   let headerMutationObserver: MutationObserver | null = null
+  let tableMutationObserver: MutationObserver | null = null
   let animationFrameId: number | null = null
   const originalHeaderCellWidths = new Map<HTMLTableCellElement, { value: string; priority: string }>()
 
@@ -89,6 +90,7 @@ export function usePageScrollTable() {
   /** 根据表格相对页面滚动容器的位置切换表头吸顶状态。 */
   function updateStickyState() {
     animationFrameId = null
+    refreshTableElements()
 
     const pageContainer = pageContainerRef.value
     const toolbar = toolbarRef.value
@@ -147,6 +149,44 @@ export function usePageScrollTable() {
     tableRef.value?.scrollTo({ left: tableHeader.scrollLeft })
   }
 
+  /** 重新查找 Naive UI 表格节点，并在节点变化后更新相关监听。 */
+  function refreshTableElements() {
+    const tableContainer = tableContainerRef.value
+    if (!tableContainer) return
+
+    const nextTableHeader = tableContainer.querySelector<HTMLElement>('.n-data-table-thead')
+    const nextTableHeaderRow = nextTableHeader?.querySelector<HTMLElement>('.n-data-table-tr') ?? null
+    const nextTableScrollContainer = tableContainer.querySelector<HTMLElement>('.n-scrollbar-container')
+    const nextTableInner = nextTableScrollContainer?.querySelector<HTMLElement>('.n-data-table-table') ?? null
+    const elementsChanged =
+      tableHeader !== nextTableHeader ||
+      tableHeaderRow !== nextTableHeaderRow ||
+      tableScrollContainer !== nextTableScrollContainer ||
+      tableInner !== nextTableInner
+
+    if (!elementsChanged) return
+
+    tableScrollContainer?.removeEventListener('scroll', handleTableBodyScroll)
+    tableHeader?.removeEventListener('scroll', handleFixedHeaderScroll)
+    if (tableHeader) resizeObserver?.unobserve(tableHeader)
+    headerMutationObserver?.disconnect()
+    restoreHeaderColumnWidths()
+    clearHeaderGeometry()
+
+    tableHeader = nextTableHeader
+    tableHeaderRow = nextTableHeaderRow
+    tableScrollContainer = nextTableScrollContainer
+    tableInner = nextTableInner
+
+    if (!tableHeader || !tableHeaderRow || !tableInner || !tableScrollContainer) return
+
+    tableScrollContainer.addEventListener('scroll', handleTableBodyScroll, { passive: true })
+    tableHeader.addEventListener('scroll', handleFixedHeaderScroll, { passive: true })
+    resizeObserver?.observe(tableHeader)
+
+    headerMutationObserver?.observe(tableHeader, { attributes: true, childList: true, subtree: true })
+  }
+
   /** 查找 Naive UI 表格节点并注册滚动、尺寸监听。 */
   function initializePageScrollTable() {
     const pageContainer = pageContainerRef.value
@@ -154,23 +194,13 @@ export function usePageScrollTable() {
     const tableContainer = tableContainerRef.value
     if (!pageContainer || !toolbar || !tableContainer) return
 
-    tableHeader = tableContainer.querySelector<HTMLElement>('.n-data-table-thead')
-    tableHeaderRow = tableHeader?.querySelector<HTMLElement>('.n-data-table-tr') ?? null
-    tableScrollContainer = tableContainer.querySelector<HTMLElement>('.n-scrollbar-container')
-    tableInner = tableScrollContainer?.querySelector<HTMLElement>('.n-data-table-table') ?? null
-
-    if (!tableHeader || !tableHeaderRow || !tableInner || !tableScrollContainer) return
-
     pageContainer.addEventListener('scroll', scheduleStickyUpdate, { passive: true })
-    tableScrollContainer.addEventListener('scroll', handleTableBodyScroll, { passive: true })
-    tableHeader.addEventListener('scroll', handleFixedHeaderScroll, { passive: true })
     window.addEventListener('resize', scheduleStickyUpdate, { passive: true })
 
     resizeObserver = new ResizeObserver(scheduleStickyUpdate)
     resizeObserver.observe(pageContainer)
     resizeObserver.observe(toolbar)
     resizeObserver.observe(tableContainer)
-    resizeObserver.observe(tableHeader)
 
     // Naive UI 会在勾选、排序等状态变化时重写表头单元格样式。
     headerMutationObserver = new MutationObserver(mutations => {
@@ -182,7 +212,11 @@ export function usePageScrollTable() {
       )
       if (headerChanged) scheduleStickyUpdate()
     })
-    headerMutationObserver.observe(tableHeader, { attributes: true, childList: true, subtree: true })
+
+    tableMutationObserver = new MutationObserver(scheduleStickyUpdate)
+    tableMutationObserver.observe(tableContainer, { childList: true, subtree: true })
+
+    refreshTableElements()
 
     updateHeaderGeometry()
     scheduleStickyUpdate()
@@ -197,6 +231,7 @@ export function usePageScrollTable() {
     window.removeEventListener('resize', scheduleStickyUpdate)
     resizeObserver?.disconnect()
     headerMutationObserver?.disconnect()
+    tableMutationObserver?.disconnect()
 
     if (animationFrameId !== null) {
       window.cancelAnimationFrame(animationFrameId)
