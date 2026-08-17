@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@puture-ui/business':
-        specifier: ^0.0.21
-        version: 0.0.21(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
+        specifier: ^0.0.23
+        version: 0.0.23(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
       '@puture-ui/capabilities':
-        specifier: ^0.0.21
-        version: 0.0.21(vue@3.5.40(typescript@5.9.3))
+        specifier: ^0.0.23
+        version: 0.0.23(vue@3.5.40(typescript@5.9.3))
       '@puture-ui/ui':
-        specifier: ^0.0.24
-        version: 0.0.24(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
+        specifier: ^0.0.26
+        version: 0.0.26(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
       '@vicons/ionicons5':
         specifier: ^0.13.0
         version: 0.13.0
@@ -489,19 +489,19 @@ packages:
     resolution: {integrity: sha512-7FNeNl8NCE7aINx7WXiKQrPYZWC/hvrTsmk6zmxbI7LTXE7hVek/n8AfVgpe2y82zl3w0HvCHN0bVKMBoJcC0w==}
     engines: {node: '>= 10.0.0'}
 
-  '@puture-ui/business@0.0.21':
-    resolution: {integrity: sha512-O6skefI3skxBNgak2NuiJ3/FNInfIz5gaAGMGcI1ihPxdfqEFwRs+CKsAXAVu2NHzUNGqiL4pNo/K6TQWNH3Xw==}
+  '@puture-ui/business@0.0.23':
+    resolution: {integrity: sha512-zFS8r9/Nuzkpdmc2lly1ochX6EVZvZksRu62r12XTdCXiM756RmRm/VNuZtCr9j3Rv5pFfF+xqD86xaPbDVIqQ==}
     peerDependencies:
       naive-ui: ^2.44.1
       vue: ^3.4.0
 
-  '@puture-ui/capabilities@0.0.21':
-    resolution: {integrity: sha512-EPDCegmgv0l/5G0C1E3JWcXQ844nIegzRqs3s/ltv3scrjSfD4K6zMhDoWtz3ClsXz34I5E0mPVZC6oegV/xVQ==}
+  '@puture-ui/capabilities@0.0.23':
+    resolution: {integrity: sha512-B40xb4FfH/iMWL8siW2bQu0wK90ziv/Vel4+QTl6U+FCqo7KIsSobNgdm/6h3V9+6r8HS5cStjoTDMaXPMTUxA==}
     peerDependencies:
       vue: ^3.4.0
 
-  '@puture-ui/ui@0.0.24':
-    resolution: {integrity: sha512-BFmFKrmSSACMH1ayZi981EmgXlZQjAgODONFS67HEmyywhA1Jju1MUtvlr8U+wNt1pWDiVDs5gQaP3vgNy6KzA==}
+  '@puture-ui/ui@0.0.26':
+    resolution: {integrity: sha512-ZCnfdoSJurM4evGajoefT004qYVVW6QpPRyuZ59+3NW4DzcU8vAUgb9SC0Ld2kkpZOHqguRAETCvonNCYoNGgw==}
     peerDependencies:
       dayjs: ^1.11.0
       naive-ui: ^2.44.1
@@ -1849,10 +1849,10 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.6.0
     optional: true
 
-  '@puture-ui/business@0.0.21(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))':
+  '@puture-ui/business@0.0.23(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))':
     dependencies:
-      '@puture-ui/capabilities': 0.0.21(vue@3.5.40(typescript@5.9.3))
-      '@puture-ui/ui': 0.0.24(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
+      '@puture-ui/capabilities': 0.0.23(vue@3.5.40(typescript@5.9.3))
+      '@puture-ui/ui': 0.0.26(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
       naive-ui: 2.44.1(vue@3.5.40(typescript@5.9.3))
       vue: 3.5.40(typescript@5.9.3)
     transitivePeerDependencies:
@@ -1860,7 +1860,7 @@ snapshots:
       - debug
       - supports-color
 
-  '@puture-ui/capabilities@0.0.21(vue@3.5.40(typescript@5.9.3))':
+  '@puture-ui/capabilities@0.0.23(vue@3.5.40(typescript@5.9.3))':
     dependencies:
       axios: 1.18.1
       vue: 3.5.40(typescript@5.9.3)
@@ -1868,7 +1868,7 @@ snapshots:
       - debug
       - supports-color
 
-  '@puture-ui/ui@0.0.24(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))':
+  '@puture-ui/ui@0.0.26(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))':
     dependencies:
       dayjs: 1.11.21
       naive-ui: 2.44.1(vue@3.5.40(typescript@5.9.3))
