@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@puture-ui/business':
-        specifier: ^0.0.23
-        version: 0.0.23(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
+        specifier: ^0.0.26
+        version: 0.0.26(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))
       '@puture-ui/capabilities':
         specifier: ^0.0.23
         version: 0.0.23(vue@3.5.40(typescript@5.9.3))
@@ -489,8 +489,8 @@ packages:
     resolution: {integrity: sha512-7FNeNl8NCE7aINx7WXiKQrPYZWC/hvrTsmk6zmxbI7LTXE7hVek/n8AfVgpe2y82zl3w0HvCHN0bVKMBoJcC0w==}
     engines: {node: '>= 10.0.0'}
 
-  '@puture-ui/business@0.0.23':
-    resolution: {integrity: sha512-zFS8r9/Nuzkpdmc2lly1ochX6EVZvZksRu62r12XTdCXiM756RmRm/VNuZtCr9j3Rv5pFfF+xqD86xaPbDVIqQ==}
+  '@puture-ui/business@0.0.26':
+    resolution: {integrity: sha512-J6bPEX9DnGkqEgnrawNnVny4rD15wem6VTi4QRqIV3r6nyu6s/64lHanb7Jf2Tl6q1BzsjylLLR1ufAhQGvxRg==}
     peerDependencies:
       naive-ui: ^2.44.1
       vue: ^3.4.0
@@ -1849,7 +1849,7 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.6.0
     optional: true
 
-  '@puture-ui/business@0.0.23(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))':
+  '@puture-ui/business@0.0.26(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))':
     dependencies:
       '@puture-ui/capabilities': 0.0.23(vue@3.5.40(typescript@5.9.3))
       '@puture-ui/ui': 0.0.26(dayjs@1.11.21)(naive-ui@2.44.1(vue@3.5.40(typescript@5.9.3)))(vue@3.5.40(typescript@5.9.3))

@@ -12,7 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@puture-ui/business": "^0.0.23",
+    "@puture-ui/business": "^0.0.26",
     "@puture-ui/capabilities": "^0.0.23",
     "@puture-ui/ui": "^0.0.26",
     "@vicons/ionicons5": "^0.13.0",
