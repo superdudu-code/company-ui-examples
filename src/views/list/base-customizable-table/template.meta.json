@@ -4,7 +4,6 @@
   "description": "基于基础表格布局，接入搜索视图与用户表格列偏好的后台管理列表页",
   "whenToUse": "后台管理列表需要保存常用查询条件，并允许用户按偏好控制表格列显隐时",
   "entryLocal": "src/views/list/base-customizable-table/index.vue",
-  "entryUrl": "/templates/base-customizable-table.vue",
   "designGuideUrl": "https://ui-test-01.external.sub.puture-in.com/design/base-table.md",
   "route": "/list/base-customizable-table",
   "tags": ["基础列表", "搜索视图", "列自定义", "分页", "批量操作"]

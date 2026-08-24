@@ -47,7 +47,7 @@ AI 指南与接入说明以 https://ui-test-01.external.sub.puture-in.com/ai/ �
 需要开发完整页面（列表页 / 详情页 / 表单页等）时，优先按以下顺序：
 
 1. 查阅模板清单：
-   https://ui-test-01.external.sub.puture-in.com/example/templates.json
+   https://raw.githubusercontent.com/superdudu-code/company-ui-examples/main/public/templates.json
 
 2. 根据 `whenToUse` / `tags` / `description` 匹配到合适模板。
 
@@ -55,9 +55,7 @@ AI 指南与接入说明以 https://ui-test-01.external.sub.puture-in.com/ai/ �
    理解该页面类型的布局约束（分区、栅格、按钮权重、高度处理等）。
 
 4. 再读取条目中的 `sourceUrl` 获取 Vue 模板源码。
-   旧清单若缺少 `sourceUrl`，使用：
-   `https://ui-test-01.external.sub.puture-in.com/example/templates/<name>.vue`
-   （`<name>` 即 `templates.json` 中该条目的 `name` 字段）
+   `sourceUrl` 指向公开仓库的 GitHub raw 文件地址，可直接读取源码。
 
 5. 在模板源码基础上按需求改字段、改列、改交互，不要从零拼装。
    模板中出现的具体控件（NSelect / NRadioGroup 等）仅是示例填充，
@@ -89,7 +87,7 @@ AI 指南与接入说明以 https://ui-test-01.external.sub.puture-in.com/ai/ �
 ### 分析顺序
 
 1. 阅读现有页面、调用关系、接口、类型、路由和相关样式。
-2. 只通过 https://ui-test-01.external.sub.puture-in.com/example/templates.json 获取模板清单，按 `whenToUse`、`tags` 和 `description` 匹配模板，不在本文件中维护模板名称。
+2. 只通过 https://raw.githubusercontent.com/superdudu-code/company-ui-examples/main/public/templates.json 获取模板清单，按 `whenToUse`、`tags` 和 `description` 匹配模板，不在本文件中维护模板名称。
 3. 阅读候选模板源码和 `designGuideUrl`，判断模板是否真的适合当前业务复杂度。
 4. 阅读候选组件文档、公开类型、实现和示例，确认值字段、标签字段和数据适配方式。
 5. 形成推荐方案，区分“已确认”“从代码推断”和“待确认”。

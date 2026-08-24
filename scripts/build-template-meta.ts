@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto"
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises"
+import { readdir, readFile, writeFile } from "node:fs/promises"
 import { dirname, relative, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -9,7 +9,6 @@ interface TemplateMeta {
   description: string
   whenToUse?: string
   entryLocal: string
-  entryUrl?: string
   designGuideUrl?: string
   route?: string
   tags?: string[]
@@ -20,7 +19,6 @@ interface TemplateOutput {
   title: string
   description: string
   whenToUse?: string
-  entryUrl: string
   sourceUrl: string
   designGuideUrl?: string
   route?: string
@@ -34,9 +32,8 @@ const scriptsDir = dirname(fileURLToPath(import.meta.url))
 const examplesRoot = resolve(scriptsDir, "..")
 const viewsDir = resolve(examplesRoot, "src/views")
 const publicDir = resolve(examplesRoot, "public")
-const templatesDir = resolve(publicDir, "templates")
 const templatesJsonPath = resolve(publicDir, "templates.json")
-const publicBaseUrl = "https://ui-test-01.external.sub.puture-in.com"
+const githubRawBaseUrl = "https://raw.githubusercontent.com/superdudu-code/company-ui-examples/main"
 
 /**
  * 递归收集 views 目录下的模板元数据文件。
@@ -88,17 +85,13 @@ function validateTemplateMeta(meta: TemplateMeta, filePath: string): void {
     throw new Error(`模板 name 必须为 kebab-case：${formatPath(filePath)} (${meta.name})`)
   }
 
-  if (meta.entryUrl !== undefined && (typeof meta.entryUrl !== "string" || meta.entryUrl.trim() === "")) {
-    throw new Error(`模板 entryUrl 必须为非空字符串：${formatPath(filePath)}`)
-  }
-
   if (meta.tags !== undefined && !isStringArray(meta.tags)) {
     throw new Error(`模板 tags 必须为字符串数组：${formatPath(filePath)}`)
   }
 }
 
 /**
- * 构建单个公开模板条目并复制源码文件。
+ * 构建单个公开模板条目。
  */
 async function buildTemplate(meta: TemplateMeta, metaFilePath: string): Promise<TemplateOutput> {
   const entryPath = resolve(examplesRoot, meta.entryLocal)
@@ -113,18 +106,13 @@ async function buildTemplate(meta: TemplateMeta, metaFilePath: string): Promise<
     )
   })
   const version = createHash("sha256").update(source, "utf-8").digest("hex").slice(0, 12)
-  const entryUrl = meta.entryUrl ?? `/templates/${meta.name}.vue`
-  const sourceUrl = `${publicBaseUrl}/example/templates/${meta.name}.vue`
-  const outputPath = resolve(templatesDir, `${meta.name}.vue`)
-
-  await writeFile(outputPath, source.replace(/^\uFEFF/, ""), "utf-8")
+  const sourceUrl = `${githubRawBaseUrl}/${meta.entryLocal.replaceAll("\\", "/")}`
 
   return omitUndefined({
     name: meta.name,
     title: meta.title,
     description: meta.description,
     whenToUse: meta.whenToUse,
-    entryUrl,
     sourceUrl,
     designGuideUrl: meta.designGuideUrl,
     route: meta.route,
@@ -167,11 +155,9 @@ function getErrorMessage(error: unknown): string {
 }
 
 /**
- * 构建公开模板元数据清单和源码文件。
+ * 构建公开模板元数据清单。
  */
 async function main(): Promise<void> {
-  await mkdir(templatesDir, { recursive: true })
-
   const metaFiles = await collectMetaFiles(viewsDir)
   const usedNames = new Set<string>()
   const templates: TemplateOutput[] = []
