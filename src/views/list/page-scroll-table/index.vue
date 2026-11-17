@@ -79,6 +79,7 @@
           :row-key="row => row.id"
           :row-props="rowProps"
           :scroll-x="2000"
+          :scrollbar-props="{ trigger: 'none' }"
           @update:checked-row-keys="handleCheckedRowChange"
         />
       </section>

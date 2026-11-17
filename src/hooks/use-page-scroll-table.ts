@@ -19,6 +19,22 @@ export function usePageScrollTable() {
   let animationFrameId: number | null = null
   const originalHeaderCellWidths = new Map<HTMLTableCellElement, { value: string; priority: string }>()
 
+  /** 将原有横向滚动条定位在表格可视区域底部、分页栏上沿。 */
+  function updateScrollbarGeometry() {
+    const pageContainer = pageContainerRef.value
+    const tableContainer = tableContainerRef.value
+    if (!pageContainer || !tableContainer) return
+
+    const pageRect = pageContainer.getBoundingClientRect()
+    const tableRect = tableContainer.getBoundingClientRect()
+    const pagination = tableContainer.parentElement?.querySelector('.page-wrap')
+    const bottom = Math.min(pageRect.bottom, window.innerHeight, tableRect.bottom, pagination?.getBoundingClientRect().top ?? pageRect.bottom)
+    tableContainer.style.setProperty('--page-scroll-table-rail-top', `${bottom - 4}px`)
+    tableContainer.style.setProperty('--page-scroll-table-rail-left', `${tableRect.left}px`)
+    tableContainer.style.setProperty('--page-scroll-table-rail-width', `${tableRect.width}px`)
+    tableContainer.style.setProperty('--page-scroll-table-rail-display', tableRect.top < bottom && tableRect.bottom > pageRect.top ? 'block' : 'none')
+  }
+
   /** 将表体 colgroup 的实际列宽同步到吸顶表头。 */
   function syncHeaderColumnWidths() {
     if (!tableHeader || !tableInner) return
@@ -69,7 +85,7 @@ export function usePageScrollTable() {
 
     const tableRect = tableContainer.getBoundingClientRect()
     syncHeaderHeightVar()
-    tableHeader.style.left = `${tableRect.left}px`
+    tableHeader.style.left = headerFixed.value ? `${tableRect.left}px` : '0px'
     tableHeader.style.width = `${tableRect.width}px`
     tableHeaderRow.style.width = `${tableInner.offsetWidth}px`
 
@@ -91,6 +107,7 @@ export function usePageScrollTable() {
   function updateStickyState() {
     animationFrameId = null
     refreshTableElements()
+    updateScrollbarGeometry()
 
     const pageContainer = pageContainerRef.value
     const toolbar = toolbarRef.value
@@ -107,28 +124,11 @@ export function usePageScrollTable() {
     pageContainer.style.setProperty('--page-scroll-table-toolbar-height', `${toolbarHeight}px`)
     syncHeaderHeightVar()
 
-    if (headerFixed.value !== nextHeaderFixed) {
-      if (nextHeaderFixed) {
-        syncHeaderColumnWidths()
-        headerFixed.value = true
-      } else {
-        headerFixed.value = false
-        void nextTick(() => {
-          if (!headerFixed.value) {
-            restoreHeaderColumnWidths()
-            clearHeaderGeometry()
-          }
-        })
-      }
-    }
-
-    if (nextHeaderFixed) {
-      void nextTick(() => {
-        if (!headerFixed.value) return
-        syncHeaderColumnWidths()
-        updateHeaderGeometry()
-      })
-    }
+    headerFixed.value = nextHeaderFixed
+    void nextTick(() => {
+      syncHeaderColumnWidths()
+      updateHeaderGeometry()
+    })
   }
 
   /** 使用动画帧合并连续滚动和尺寸变化计算。 */
@@ -139,13 +139,14 @@ export function usePageScrollTable() {
 
   /** 将表体横向滚动位置同步给固定表头。 */
   function handleTableBodyScroll() {
-    if (!headerFixed.value || !tableHeader || !tableScrollContainer) return
+    if (!tableHeader || !tableScrollContainer) return
     tableHeader.scrollLeft = tableScrollContainer.scrollLeft
   }
 
   /** 将固定表头横向滚动位置同步给表体。 */
   function handleFixedHeaderScroll() {
-    if (!headerFixed.value || !tableHeader) return
+    if (!tableHeader || !tableScrollContainer) return
+    if (Math.abs(tableHeader.scrollLeft - tableScrollContainer.scrollLeft) < 1) return
     tableRef.value?.scrollTo({ left: tableHeader.scrollLeft })
   }
 
@@ -169,6 +170,7 @@ export function usePageScrollTable() {
     tableScrollContainer?.removeEventListener('scroll', handleTableBodyScroll)
     tableHeader?.removeEventListener('scroll', handleFixedHeaderScroll)
     if (tableHeader) resizeObserver?.unobserve(tableHeader)
+    if (tableInner) resizeObserver?.unobserve(tableInner)
     headerMutationObserver?.disconnect()
     restoreHeaderColumnWidths()
     clearHeaderGeometry()
@@ -183,6 +185,7 @@ export function usePageScrollTable() {
     tableScrollContainer.addEventListener('scroll', handleTableBodyScroll, { passive: true })
     tableHeader.addEventListener('scroll', handleFixedHeaderScroll, { passive: true })
     resizeObserver?.observe(tableHeader)
+    resizeObserver?.observe(tableInner)
 
     headerMutationObserver?.observe(tableHeader, { attributes: true, childList: true, subtree: true })
   }
@@ -201,11 +204,10 @@ export function usePageScrollTable() {
     resizeObserver.observe(pageContainer)
     resizeObserver.observe(toolbar)
     resizeObserver.observe(tableContainer)
+    const pagination = tableContainer.parentElement?.querySelector('.page-wrap')
+    if (pagination) resizeObserver.observe(pagination)
 
-    // Naive UI 会在勾选、排序等状态变化时重写表头单元格样式。
     headerMutationObserver = new MutationObserver(mutations => {
-      if (!headerFixed.value) return
-
       const headerChanged = mutations.some(
         mutation =>
           mutation.type === 'childList' || (mutation.target !== tableHeader && mutation.target !== tableHeaderRow)

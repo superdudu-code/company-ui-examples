@@ -28,53 +28,66 @@
   overflow-anchor: none;
   flex: none;
 
-  &::before {
-    display: none;
-    height: var(--page-scroll-table-header-height);
-    content: '';
-  }
-
   :deep(.page-table) {
     height: auto;
+
+    .n-data-table-table {
+      padding-top: var(--page-scroll-table-header-height);
+    }
   }
 
-  &.header-fixed {
-    &::before {
-      display: block;
+  :deep(.n-data-table-thead) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    background-color: var(--pc-fill-card);
+
+    .n-data-table-tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
     }
 
-    :deep(.n-data-table-thead) {
-      position: fixed;
-      top: calc(var(--page-scroll-table-top) + var(--page-scroll-table-toolbar-height));
-      z-index: 20;
-      overflow-x: auto;
-      background-color: var(--pc-fill-card);
-
-      .n-data-table-tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
-      }
-
-      .n-data-table-th {
-        box-sizing: border-box;
-        width: auto;
-      }
-
-      &::-webkit-scrollbar {
-        height: 0;
-        background: transparent;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background-color: #bfbfbf;
-        cursor: pointer;
-      }
+    .n-data-table-th {
+      box-sizing: border-box;
+      width: auto;
     }
 
-    &:hover :deep(.n-data-table-thead::-webkit-scrollbar) {
-      height: 4px;
+    &::-webkit-scrollbar {
+      display: none;
+      height: 0;
+    }
+  }
+
+  &.header-fixed :deep(.n-data-table-thead) {
+    position: fixed;
+    top: calc(var(--page-scroll-table-top) + var(--page-scroll-table-toolbar-height));
+  }
+
+  :deep(.n-scrollbar-rail--horizontal) {
+    position: fixed;
+    top: var(--page-scroll-table-rail-top) !important;
+    bottom: auto !important;
+    left: var(--page-scroll-table-rail-left) !important;
+    right: auto !important;
+    width: var(--page-scroll-table-rail-width);
+    height: 4px !important;
+    z-index: 11 !important;
+    display: var(--page-scroll-table-rail-display, none);
+
+    .n-scrollbar-rail__scrollbar {
+      height: 4px !important;
+      border-radius: 4px;
+      background-color: #bfbfbf;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #999999;
+      }
     }
   }
 }

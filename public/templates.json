@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T02:44:18.050Z",
+  "generatedAt": "2026-11-17T11:12:39.917Z",
   "templates": [
     {
       "name": "base-customizable-table",
@@ -16,7 +16,7 @@
         "分页",
         "批量操作"
       ],
-      "version": "c4f3c19a7f81"
+      "version": "87597ddb92f2"
     },
     {
       "name": "base-dialog-form",
@@ -33,7 +33,7 @@
         "表单校验",
         "提交反馈"
       ],
-      "version": "e5cbda33853f"
+      "version": "20ad675ff333"
     },
     {
       "name": "list-base-table",
@@ -49,7 +49,7 @@
         "分页",
         "批量操作"
       ],
-      "version": "ed25fff4ef45"
+      "version": "fba66d28a94c"
     },
     {
       "name": "page-scroll-table",
@@ -65,7 +65,7 @@
         "分页",
         "批量操作"
       ],
-      "version": "2d5f3b30e442"
+      "version": "2f9aa79ea1fe"
     }
   ]
 }
